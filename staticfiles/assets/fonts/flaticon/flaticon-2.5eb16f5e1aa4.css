@@ -1,0 +1,39 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 24/09/2022 14:02
+  	*/
+
+@font-face {
+  font-family: "Flaticon";
+  src: url("Flaticon.65c924548a53.eot");
+  src: url("Flaticond41d.65c924548a53.eot?#iefix") format("embedded-opentype"),
+       url("Flaticon.891b7d7c9c53.woff2") format("woff2"),
+       url("Flaticon.12943a70faba.woff") format("woff"),
+       url("Flaticon.717880bad5de.ttf") format("truetype"),
+       url("Flaticon.b4d62934e846.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("Flaticon.b4d62934e846.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {
+  font-family: Flaticon;
+  font-style: normal;
+}
+
+.flaticon-message:before { content: "\f100"; }
+.flaticon-ring:before { content: "\f101"; }
+.flaticon-earrings:before { content: "\f102"; }
+.flaticon-bracelet:before { content: "\f103"; }
+.flaticon-necklace:before { content: "\f104"; }
+.flaticon-bracelet-1:before { content: "\f105"; }
+.flaticon-phone:before { content: "\f106"; }
+.flaticon-bracelet-2:before { content: "\f107"; }
+.flaticon-diamond:before { content: "\f108"; }
