@@ -77,9 +77,10 @@ def nominate(request):
                 return redirect('nominate_redirect')
     else:
         if Nomination_visiblility.objects.all().first().visibility:
-            return render(request,'coming-soon.html')
-        category=Category.objects.all()
-        return render(request, 'nominate.html', {'categories':category})
+            category=Category.objects.all()
+            return render(request, 'nominate.html', {'categories':category})
+       
+        return render(request,'coming-soon.html')
 
 
 def dashboard(request):
