@@ -1,0 +1,339 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from intez-html.vercel.app/balance.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Oct 2021 14:57:37 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EFE - Dashboard </title>
+    <link rel="stylesheet" href="{% static 'dash/modal/css/ionicons.min.css' %}">
+		<link rel="stylesheet" href="{% static 'dash/modal/css/style.css' %}">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="{% static 'dash/css/style.css' %}">
+     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+</head>
+
+<body class="dashboard">
+    
+    <div class="modal fade" id="addBank" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Check Nomination Result</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'nomination_result' %}" method='post' class="identity-upload">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div >
+                                <label class="form-label">Category</label>
+                                <select class="form-select" name="category_id">
+                                    {% for category in categories %}
+                                    <option value="{{category.id}}">{{category}}</option>
+{% endfor %}
+                                </select>
+                            
+                            </div>
+                        </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"
+                        >Confirm</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    
+{% comment %} <div id="preloader">
+    <i>.</i>
+    <i>.</i>
+    <i>.</i>
+</div> {% endcomment %}
+
+<div id="main-wrapper">
+
+
+   <div class="header">
+    <div class="container">
+       <div class="row">
+          <div class="col-xxl-12">
+             <div class="header-content">
+                <div class="header-left">
+                   <div class="brand-logo"><a class="mini-logo" href="index-2.html"><img src="images/logoi.png" alt="" width="40"></a></div>
+                   <div class="search">
+                      <form action="#">
+                         <div class="input-group"><input type="text" class="form-control" placeholder="Search Here"><span class="input-group-text"><i class="ri-search-line"></i></span></div>
+                      </form>
+                   </div>
+                </div>
+                <div class="header-right">
+                   <div class="dark-light-toggle"><span class="dark"><i class="ri-moon-line"></i></span><span class="light"><i class="ri-sun-line"></i></span></div>
+                   <div class="nav-item dropdown notification dropdown">
+                      <div data-toggle="dropdown" aria-haspopup="true" class="" aria-expanded="false">
+                         <div class="notify-bell icon-menu"><span><i class="ri-notification-2-line"></i></span></div>
+                      </div>
+                     
+                   </div>
+                   <div class="dropdown profile_log dropdown">
+                      <div data-toggle="dropdown" aria-haspopup="true" class="" aria-expanded="false">
+                         <div class="user icon-menu active"><span><i class="ri-user-line"></i></span></div>
+                      </div>
+                      <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu dropdown-menu-right">
+                         <div class="user-email">
+                            <div class="user">
+                               <span class="thumb"><img src="images/profile/3.png" alt=""></span>
+                               <div class="user-info">
+                                  <h5>{{request.user.first_name}} {{request.user.last_name}}</h5>
+                                  <span>{{request.user.email}}</span>
+                               </div>
+                            </div>
+                         </div>
+                        
+                         <a class="dropdown-item logout" href="signin.html"><i class="ri-logout-circle-line"></i>Logout</a>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+
+   <div class="sidebar">
+    <div class="brand-logo"><a class="full-logo" href="index-2.html"><img src="images/logoi.png" alt="" width="30"></a></div>
+    <div class="menu">
+        <ul>
+            <li><a href="">
+                    <span><i class="ri-home-5-line"></i></span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            
+            <li><a href="">
+                    <span><i class="ri-secure-payment-line"></i></span>
+                    <span class="nav-text">Transactions</span>
+                </a>
+            </li>
+            
+            <li><a href="">
+                    <span><i class="ri-settings-3-line"></i></span>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </li>
+            <li class="logout"><a href="">
+                    <span><i class="ri-logout-circle-line"></i></span>
+                    <span class="nav-text">Signout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+   <div class="content-body">
+      <div class="container">
+         <div class="page-title">
+            <div class="row align-items-center justify-content-between">
+               <div class="col-xl-4">
+                  <div class="page-title-content">
+                     <h3>Dashboard</h3>
+                     <p class="mb-2">Welcome EFE dashboard</p>
+                  </div>
+               </div>
+               <div class="col-auto">
+                  <div class="breadcrumbs">
+                     <a href="#">
+                        Dashboard
+                     </a>
+                     <span><i class="ri-arrow-right-s-line"></i></span><a href="#">Home</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-xxl-6 col-xl-6 col-lg-6">
+               <div class="card">
+                  <div class="card-header">
+                     <h4 class="card-title">Balance Details</h4>
+                  </div>
+                  <div class="card-body">
+                     <div class="row">
+                        <div class="col-12">
+                           <div class="total-balance">
+                              <p>Total Balance</p>
+                              <h2>NGN221,478</h2>
+                           </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                           <div class="balance-stats active">
+                              <p>Total Number of votes</p>
+                              <h3>42,678</h3>
+                           </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                           <div class="balance-stats">
+                              <p>Total number of candidates</p>
+                              <h3>50</h3>
+                           </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                           <div class="balance-stats">
+                              <p>Total number of votes today</p>
+                              <h3>255</h3>
+                           </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                           <div class="balance-stats">
+                              <p>Balance today</p>
+                              <h3>NGN40,000</h3>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="col-xxl-6 col-xl-6 col-lg-6">
+               <div class="card">
+                  <div class="card-header">
+                     <h4 class="card-title">Election Manager</h4>
+                     
+                     {% comment %} <a href="#">See More</a> {% endcomment %}
+                  </div>
+                  
+                  <div class="card-body">
+                    {% for message in messages %}
+                     <div class="alert alert-primary" role="alert">
+                       {{message}}
+                      </div>
+                      {% endfor %}
+                     <div class="bills-widget">
+                        <div class="bills-widget-content d-flex justify-content-between align-items-center active">
+                           <div>
+                            <h4>Nomination</h4>
+{% if nomination_status.visibility %}
+<p>Click on end button to hide nomination page</p>
+                              
+                              {% else %}
+                              <p>Click on start button to display nomination page</p>
+                              {% endif %}
+
+                             
+                           </div>
+                           <div>
+                            {% if nomination_status.visibility %}
+                            <a href="{% url 'modify_nomination_status' id=0 %}" class="btn btn-primary">End</a>
+                            
+                            {% else %}
+                            <a href="{% url 'modify_nomination_status' id=1 %}" class="btn btn-primary">Start</a>
+                            {% endif %}
+
+                        </div>
+                        </div>
+                        <div class="bills-widget-content d-flex justify-content-between align-items-center">
+                           <div>
+                              
+                              <h4>Election</h4>
+                              {% if election_status.visibility %}
+                              <p>Click on end button to hide voting pages.</p>
+                                                            
+                                                            {% else %}
+                                                            <p>Click on start button to display voting pages.</p>
+                                                            {% endif %}
+
+                             
+                              
+                              
+                           </div>
+                           <div>
+                            
+                            {% if election_status.visibility %}
+                            <a href="{% url 'election_status' id=0 %}" class="btn btn-primary">End</a>
+                            
+                            {% else %}
+                            <a href="{% url 'election_status' id=1 %}" class="btn btn-primary">Start</a>
+                            {% endif %}
+                        
+                        
+                        </div>
+                        </div>
+                        <div class="bills-widget-content d-flex justify-content-between align-items-center">
+                           <div>
+                              <h4>Results</h4>
+                              <p>Click view button to query both Nomination and Election Results</p>
+                           </div>
+                           <div>
+                            <button type="button" class="btn btn-primary m-2" data-toggle="modal"
+            data-target="#addBank">View</button></div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form>
+                        <div class="form-group">
+                          <label for="recipient-name" class="col-form-label">Recipient:</label>
+                          <input type="text" class="form-control" id="recipient-name">
+                        </div>
+                        <div class="form-group">
+                          <label for="message-text" class="col-form-label">Message:</label>
+                          <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Send message</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            
+           
+         </div>
+      </div>
+   </div>
+</div>
+
+<script src="{% static 'dash/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'dash/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<script src="{% static 'dash/modal/js/jquery.min.js' %}"></script>
+    <script src="{% static 'dash/modal/js/popper.js' %}"></script>
+    <script src="{% static 'dash/modal/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'dash/modal/js/main.js' %}"></script>
+
+
+<script src="{% static 'dash/js/scripts.js' %}"></script>
+
+
+</body>
+
+
+<!-- Mirrored from intez-html.vercel.app/balance.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Oct 2021 14:57:37 GMT -->
+</html>

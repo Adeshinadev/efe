@@ -1,0 +1,211 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from intez-html.vercel.app/balance.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Oct 2021 14:57:37 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EFE - Dashboard </title>
+    <link rel="stylesheet" href="{% static 'dash/modal/css/ionicons.min.css' %}">
+		<link rel="stylesheet" href="{% static 'dash/modal/css/style.css' %}">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="{% static 'dash/css/style.css' %}">
+     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+ <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+</head>
+
+
+<body class="dashboard">
+
+
+
+<div id="main-wrapper">
+
+
+    <div class="header">
+    <div class="container">
+       <div class="row">
+          <div class="col-xxl-12">
+             <div class="header-content">
+                <div class="header-left">
+                   <div class="brand-logo"><a class="mini-logo" href="index-2.html"><img src="images/logoi.png" alt="" width="40"></a></div>
+                   <div class="search">
+                      <form action="#">
+                         <div class="input-group"><input type="text" class="form-control" placeholder="Search Here"><span class="input-group-text"><i class="ri-search-line"></i></span></div>
+                      </form>
+                   </div>
+                </div>
+                <div class="header-right">
+                   <div class="dark-light-toggle"><span class="dark"><i class="ri-moon-line"></i></span><span class="light"><i class="ri-sun-line"></i></span></div>
+                   <div class="nav-item dropdown notification dropdown">
+                      <div data-toggle="dropdown" aria-haspopup="true" class="" aria-expanded="false">
+                         
+                      </div>
+                      <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu notification-list dropdown-menu dropdown-menu-right">
+                         <h4>Recent Notification</h4>
+                         <div class="lists">
+                          
+                           
+                            <a class="" href="index-2.html#">
+                               <div class="d-flex align-items-center">
+                                  <span class="me-3 icon success"><i class="ri-check-line"></i></span>
+                                  <div>
+                                     <p>Device confirmation completed</p>
+                                     <span>2020-11-04 12:00:23</span>
+                                  </div>
+                               </div>
+                            </a>
+                            <a class="" href="index-2.html#">
+                               <div class="d-flex align-items-center">
+                                  <span class="me-3 icon pending"><i class="ri-question-mark"></i></span>
+                                  <div>
+                                     <p>Phone verification pending</p>
+                                     <span>2020-11-04 12:00:23</span>
+                                  </div>
+                               </div>
+                            </a>
+                            <a href="notification.html">More<i class="ri-arrow-right-s-line"></i></a>
+                         </div>
+                      </div>
+                   </div>
+                   <div class="dropdown profile_log dropdown">
+                      <div data-toggle="dropdown" aria-haspopup="true" class="" aria-expanded="false">
+                         <div class="user icon-menu active"><span><i class="ri-user-line"></i></span></div>
+                      </div>
+                      <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu dropdown-menu-right">
+                         <div class="user-email">
+                            <div class="user">
+                               <span class="thumb"><img src="images/profile/3.png" alt=""></span>
+                               <div class="user-info">
+                                  <h5>{{request.user.first_name}} {{request.user.last_name}}</h5>
+                                  <span>{{request.user.email}}</span>
+                               </div>
+                            </div>
+                         </div>
+                         
+                         <a class="dropdown-item logout" href="signin.html"><i class="ri-logout-circle-line"></i>Logout</a>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </div>
+ </div>
+
+    <div class="sidebar">
+    <div class="brand-logo"><a class="full-logo" href="index-2.html"><img src="images/logoi.png" alt="" width="30"></a></div>
+    <div class="menu">
+        <ul>
+            <li><a href="">
+                    <span><i class="ri-home-5-line"></i></span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+            
+            <li><a href="">
+                    <span><i class="ri-secure-payment-line"></i></span>
+                    <span class="nav-text">Transactions</span>
+                </a>
+            </li>
+            
+            <li><a href="">
+                    <span><i class="ri-settings-3-line"></i></span>
+                    <span class="nav-text">Settings</span>
+                </a>
+            </li>
+            <li class="logout"><a href="">
+                    <span><i class="ri-logout-circle-line"></i></span>
+                    <span class="nav-text">Signout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+    <div class="content-body">
+        <div class="container">
+            <div class="page-title">
+               <div class="row align-items-center justify-content-between">
+                  <div class="col-xl-4">
+                     <div class="page-title-content">
+                        <h3>Nominees</h3>
+                        <p class="mb-2">Welcome EFE Dashboard</p>
+                     </div>
+                  </div>
+                  <div class="col-auto">
+                     <div class="breadcrumbs"><a href="#">Dashboard </a><span><i class="ri-arrow-right-s-line"></i></span><a href="#">Nomination results</a></div>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               
+               
+               <div class="col-xl-12">
+                  <div class="card">
+                     <div class="card-header">
+                        <h4 class="card-title">Results</h4>
+                     </div>
+                     <div class="card-body">
+                        <div class="payments-content">
+                           <div class="table-responsive">
+                              <table class="table">
+                                 <thead>
+                                    <tr>
+                                       {% comment %} <th>
+                                          <div class="form-check"><input class="form-check-input" type="checkbox" id="flexCheckDefault" value=""></div>
+                                       </th> {% endcomment %}
+                                       <th>Brand</th>
+                                       <th>Number of nominations</th>
+                                       
+                                    </tr>
+                                 </thead>
+                                 <tbody>
+                                    {% for nominated_brand in nominated_brands %}
+                                    <tr>
+                                      
+                                      
+                                       <td>{{nominated_brand.name}}</td>
+                                       <td>{{nominated_brand.nominated}}</td>
+                                      
+                                    </tr>
+                                    {% endfor %}
+                                 </tbody>
+                              </table>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+    </div>
+</div>
+
+<script src="{% static 'dash/vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'dash/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<script src="{% static 'dash/modal/js/jquery.min.js' %}"></script>
+    <script src="{% static 'dash/modal/js/popper.js' %}"></script>
+    <script src="{% static 'dash/modal/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'dash/modal/js/main.js' %}"></script>
+
+
+<script src="{% static 'dash/js/scripts.js' %}"></script>
+
+
+
+</body>
+
+
+<!-- Mirrored from intez-html.vercel.app/bill.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Oct 2021 14:57:40 GMT -->
+</html>

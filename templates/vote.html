@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -12,34 +13,33 @@
   <!--====== Title ======-->
   <title> Voting Portal </title>
   <!--====== Favicon Icon ======-->
-  <link rel="shortcut icon" href="assets/img/logo.png" type="img/png" />
+  <link rel="shortcut icon" href="{% static 'assets/img/logo.png' %}" type="img/png" />
   <!--====== Animate Css ======-->
-  <link rel="stylesheet" href="assets/css/animate.min.css">
+  <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
   <!--====== Bootstrap css ======-->
-  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
   <!--====== Fontawesome css ======-->
-  <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}" />
   <!--====== Flaticon css ======-->
-  <link rel="stylesheet" href="assets/css/flaticon.css" />
-  <link rel="stylesheet" href="assets/fonts/flaticon/flaticon-2.css" />
-
+  <link rel="stylesheet" href="{% static 'assets/css/flaticon.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/fonts/flaticon/flaticon-2.css' %}" />
   <!--====== Magnific Popup css ======-->
-  <link rel="stylesheet" href="assets/css/magnific-popup.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}" />
   <!--====== Owl Carousel css ======-->
-  <link rel="stylesheet" href="assets/css/slick.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}" />
   <!--====== Nice Select ======-->
-  <link rel="stylesheet" href="assets/css/nice-select.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}" />
   <!--====== Mapbox ======-->
-  <link rel="stylesheet" href="assets/css/leaflet.css" />
-  <link rel="stylesheet" href="assets/css/mapbox-gl.min.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/leaflet.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/mapbox-gl.min.css' %}" />
   <!--====== Bootstrap Datepicker ======-->
-  <link rel="stylesheet" href="assets/css/bootstrap-datepicker.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datepicker.css' %}" />
   <!--====== Ion Rangeslider ======-->
-  <link rel="stylesheet" href="assets/css/ion.rangeSlider.min.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/ion.rangeSlider.min.css' %}" />
   <!--====== Default css ======-->
-  <link rel="stylesheet" href="assets/css/default.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/default.css' %}" />
   <!--====== Style css ======-->
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
 </head>
 
 <body>
@@ -122,18 +122,23 @@
 
 
                   <li class="menu-item">
-                        <a href="shop-left.html">
+                        <a href="/">
                           Home
                         </a>
                   </li>
+                  <li class="menu-item">
+                    <a href="{% url 'shop' %}">
+                      Shop
+                    </a>
+                  </li>
 
                   <li class="site-logo site-logo-text">
-                    <a href="index-2.html">
+                    <a href="/">
 
                       <div class="site-logo-text">
 <!--                        <h3>Laramiss</h3>-->
 <!--                        <h6>Luxury Pieces</h6>-->
-                         <img src="assets/img/logo.png" alt="Logo" width="53" height="60">
+                         <img src="{% static 'assets/img/logo.png' %}" alt="Logo" width="53" height="60">
                       </div>
                     </a>
                   </li>
@@ -144,8 +149,13 @@
 
 
                   <li class="menu-item">
-                    <a href="contact.html">
+                    <a href="{% url 'contact' %}">
                       Contact
+                    </a>
+                  </li>
+                  <li class="menu-item">
+                    <a href="{% url 'gallery' %}">
+                      Gallery
                     </a>
                   </li>
                 </ul>
@@ -158,23 +168,11 @@
         <!-- Site Logo -->
         <div class="site-logo site-logo-text d-block d-lg-none">
           <a href="index-2.html">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" version="1.1" width="45" height="45" x="0" y="0" viewBox="0 0 512 512" xml:space="preserve" class="">
-              <path
-                d="M369.853,250.251l-100-241C267.53,3.65,262.062,0,255.999,0s-11.531,3.65-13.854,9.251l-100,241    c-1.527,3.681-1.527,7.817,0,11.498l100,241c2.323,5.601,7.791,9.251,13.854,9.251s11.531-3.65,13.854-9.251l100-241    C371.381,258.068,371.381,253.932,369.853,250.251z M255.999,457.861L172.239,256l83.76-201.861L339.759,256L255.999,457.861z"
-                fill="#ffffff" />
-              <path class="diamond-spark spark-1"
-                d="M139.606,118.393l-63-63c-5.858-5.857-15.356-5.857-21.213,0c-5.858,5.858-5.858,15.356,0,21.213l63,63    c2.928,2.929,6.767,4.394,10.606,4.394s7.678-1.465,10.607-4.394C145.465,133.748,145.465,124.25,139.606,118.393z" fill="#ffffff" />
-              <path class="diamond-spark spark-2"
-                d="M456.607,55.393c-5.858-5.857-15.356-5.857-21.213,0l-63,63c-5.858,5.858-5.858,15.356,0,21.213    c2.928,2.929,6.767,4.394,10.606,4.394s7.678-1.465,10.607-4.394l63-63C462.465,70.748,462.465,61.25,456.607,55.393z" fill="#ffffff" />
-              <path class="diamond-spark spark-3"
-                d="M139.606,372.393c-5.858-5.857-15.356-5.857-21.213,0l-63,63c-5.858,5.858-5.858,15.356,0,21.213    C58.322,459.535,62.16,461,65.999,461s7.678-1.465,10.607-4.394l63-63C145.465,387.748,145.465,378.25,139.606,372.393z" fill="#ffffff" />
-              <path class="diamond-spark spark-4"
-                d="M456.607,435.393l-63-63c-5.858-5.857-15.356-5.857-21.213,0c-5.858,5.858-5.858,15.356,0,21.213l63,63    c2.928,2.929,6.767,4.394,10.606,4.394s7.678-1.465,10.607-4.394C462.465,450.748,462.465,441.25,456.607,435.393z" fill="#ffffff" />
-            </svg>
+           
             <div class="site-logo-text">
 <!--              <h3>Laramiss</h3>-->
 <!--              <h6>Luxury Pieces</h6>-->
-               <img src="assets/img/logo.png" alt="Logo" width="53" height="60">
+<img src="{% static 'assets/img/logo.png' %}" alt="Logo" width="53" height="60">
             </div>
           </a>
         </div>
@@ -195,123 +193,31 @@
         <!-- Mobile Menu Start -->
        <aside class="sigma-mobile-menu">
         <ul class="sigma-main-menu">
-          <li class="menu-item menu-item-has-children">
-            <a href="#">
-            Home
-            </a>
-            <ul class="sub-menu">
-              <li class="menu-item">
-                <a href="index-2.html">Home 1</a>
-              </li>
-              <li class="menu-item">
-                <a href="index-3.html">Home 2</a>
-              </li>
-              <li class="menu-item">
-                <a href="index-4.html">Home 3</a>
-              </li>
-              <li class="menu-item">
-                <a href="index-5.html">Home 4</a>
-              </li>
-            </ul>
-          </li>
-          <li class="menu-item menu-item-has-children">
-            <a href="#">Shop</a>
-            <ul class="sub-menu">
-              <li class="menu-item">
-                <a href="shop-left.html">Shop Left Sidebar</a>
-              </li>
-              <li class="menu-item">
-                <a href="shop-left-style-2.html">Shop Left Sidebar v2</a>
-              </li>
-              <li class="menu-item">
-                <a href="shop-right.html">Shop Right Sidebar</a>
-              </li>
-              <li class="menu-item">
-                <a href="shop-right-style-2.html">Shop Right Sidebar v2</a>
-              </li>
-              <li class="menu-item">
-                <a href="shop-detail.html">Product Details</a>
-              </li>
-              <li class="menu-item">
-                <a href="my-account.html">My Account</a>
-              </li>
-              <li class="menu-item">
-                <a href="checkout.html">Checkout</a>
-              </li>
-              <li class="menu-item">
-                <a href="wishlist.html">Wishlist</a>
-              </li>
-              <li class="menu-item">
-                <a href="cart.html">Cart</a>
-              </li>
-              <li class="menu-item">
-                <a href="login.html">Login</a>
-              </li>
-            </ul>
-          </li>
-          <li class="menu-item menu-item-has-children">
-            <a href="#">
-            Blog
-            </a>
-            <ul class="sub-menu">
-                            <li class="menu-item"> <a href="blog-grid-sidebar.html">Blog Grid Sidebar</a>
-                            </li>
-                            <li class="menu-item"> <a href="blog-details.html">Blog Details</a>
-                            </li>
-                            <li class="menu-item"> <a href="blog-grid.html">Blog Grid</a>
-                            </li>
-                            <li class="menu-item"> <a href="blog-list.html">Blog List</a>
-                            </li>
-                          </ul>
-          </li>
-          <li class="menu-item menu-item-has-children">
-            <a href="#">
-            Pages
-            </a>
-            <ul class="sub-menu">
-              <li class="menu-item">
-                <a href="classification.html">Classification</a>
-              </li>
-              <li class="menu-item">
-                <a href="my-account.html">Account</a>
-              </li>
-              <li class="menu-item">
-                <a href="gallery.html">Gallery</a>
-              </li>
-              <li class="menu-item">
-                <a href="team.html">Team</a>
-              </li>
-              <li class="menu-item">
-                <a href="404.html">Error 404</a>
-              </li>
-              <li class="menu-item">
-                <a href="coming-soon.html">Coming Soon</a>
-              </li>
-              <li class="menu-item">
-                <a href="typography.html">Typography</a>
-              </li>
-            </ul>
-          </li>
           <li class="menu-item">
-            <a href="about.html">
-            About
+            <a href="/">
+              Home
             </a>
           </li>
           <li class="menu-item">
-            <a href="contact.html">
+            <a href="{% url 'gallery' %}">
+              Gallery
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="{% url 'about' %}">
+              About
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="{% url 'shop' %}">
+              Shop
+            </a>
+          </li>
+          <li class="menu-item">
+          <a href="{% url 'contact' %}">
             Contact
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="shop-left.html">
-            Diamond
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="shop-left.html">
-            Accessories
-            </a>
-          </li>
+          </a>
+        </li>
         </ul>
       </aside>
         <!-- Mobile Menu End -->
@@ -417,10 +323,10 @@
               <h1 class="title" data-animation="fadeInLeft" data-delay=".9s">Ekiti <br> Fashion Exhibition </h1>
               <ul>
                 <li data-animation="fadeInUp" data-delay="1.1s">
-                  <a class="main-btn btn-filled" href="about.html">Nominate 6.0</a>
+                  <a class="main-btn btn-filled" href="{% url 'nominate' %}">Nominate 6.0</a>
                 </li>
                 <li data-animation="fadeInUp" data-delay="1.3s">
-                  <a class="main-btn btn-border" href="about.html">Vote Now</a>
+                  <a class="main-btn btn-border" href="">Vote Now</a>
                 </li>
               </ul>
             </div>
@@ -428,7 +334,7 @@
         </div>
       </div>
       <!-- banner bg -->
-      <div class="banner-bg" style="background-image: url(assets/img/banner/10.jpg);"></div>
+      <div class="banner-bg" style="background-image: url({% static 'assets/img/banner/10.jpg' %});"></div>
       <div class="banner-overly"></div>
     </div>
     <div class="single-banner d-flex align-items-center justify-content-center">
@@ -451,7 +357,7 @@
         </div>
       </div>
       <!-- banner bg -->
-      <div class="banner-bg" style="background-image: url(assets/img/banner/11.jpg);"></div>
+      <div class="banner-bg" style="background-image: url({% static 'assets/img/banner/11.jpg' %});"></div>
       <div class="banner-overly"></div>
     </div>
   </section>
@@ -493,8 +399,8 @@
               d="M456.607,435.393l-63-63c-5.858-5.857-15.356-5.857-21.213,0c-5.858,5.858-5.858,15.356,0,21.213l63,63    c2.928,2.929,6.767,4.394,10.606,4.394s7.678-1.465,10.607-4.394C462.465,450.748,462.465,441.25,456.607,435.393z" fill="#ffffff" />
           </svg>
         </div>
-        <span class="title-tag"> avail our offer  </span>
-        <h2>Our Best Feature </h2>
+        <span class="title-tag"> Voting Process  </span>
+        <h2>How to vote your most prefered candidate in EFE </h2>
       </div>
       <!-- Featre Loop -->
       <div class="row features-loop">
@@ -503,10 +409,9 @@
             <div class="icon">
               <i class="flaticon-rating"></i>
             </div>
-            <h3><a href="#">Get On Offer Price</a></h3>
+            <h3><a href="#">Step 1</a></h3>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna..
+              click <a href="https://www.deephub.com/">here</a> to vote or go to<a href="https://www.deephub.com/">https://www.deephub.com/</a> 
             </p>
             <span class="count">01</span>
             <div class="hover-img" style="background-image: url(assets/img/feature/01.jpg);"></div>
@@ -517,12 +422,11 @@
             <div class="icon">
               <i class="flaticon-clock"></i>
             </div>
-            <h3><a href="#">Quiet Hours Offer</a></h3>
+            <h3><a href="#">Step 2</a></h3>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna..
+              Go to the "voting portal" (or click personalised link of your contestant)
             </p>
-            <span class="count">5656</span>
+            <span class="count">02</span>
           </div>
         </div>
         <div class="col-lg-4 col-sm-6 order-3 order-sm-4 order-lg-3">
@@ -530,10 +434,9 @@
             <div class="icon">
               <i class="flaticon-location-pin"></i>
             </div>
-            <h3><a href="#">Assured Quality</a></h3>
+            <h3><a href="#">Step 3</a></h3>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna..
+              Search for your most prefered candidate
             </p>
             <span class="count">03</span>
             <div class="hover-img" style="background-image: url(assets/img/feature/02.jpg);"></div>
@@ -544,10 +447,9 @@
             <div class="icon">
               <i class="flaticon-clock-1"></i>
             </div>
-            <h3><a href="#">Free Cancellation</a></h3>
+            <h3><a href="#">Step 4</a></h3>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna..
+              Click on vote (underneath the candidate's picture)
             </p>
             <span class="count">04</span>
           </div>
@@ -557,10 +459,9 @@
             <div class="icon">
               <i class="flaticon-credit-card"></i>
             </div>
-            <h3><a href="#">Payment Options</a></h3>
+            <h3><a href="#">Step 05</a></h3>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna..
+              select numbers of voters and prefered means of payment (Advisable you make use of DEBIT/ CREDIT card or USSD for payment)
             </p>
             <span class="count">05</span>
             <div class="hover-img" style="background-image: url(assets/img/feature/03.jpg);"></div>
@@ -571,10 +472,9 @@
             <div class="icon">
               <i class="flaticon-discount"></i>
             </div>
-            <h3><a href="#">Special Offers</a></h3>
+            <h3><a href="#">Step 06</a></h3>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna..
+              Complete payment transacton and you will recieve a notification of successful transacton in your email
             </p>
             <span class="count">06</span>
           </div>
@@ -765,37 +665,37 @@
   <!--====== Modal Popup End ======-->
 
   <!--====== jquery js ======-->
-  <script src="assets/js/vendor/modernizr-3.6.0.min.js"></script>
-  <script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
+  <script src="{% static 'assets/js/vendor/modernizr-3.6.0.min.js' %}"></script>
+  <script src="{% static 'assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
   <!--====== Bootstrap js ======-->
-  <script src="assets/js/bootstrap.min.js"></script>
-  <script src="assets/js/popper.min.js"></script>
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/popper.min.js' %}"></script>
   <!--====== Slick js ======-->
-  <script src="assets/js/slick.min.js"></script>
+  <script src="{% static 'assets/js/slick.min.js' %}"></script>
   <!--====== Isotope js ======-->
-  <script src="assets/js/isotope.pkgd.min.js"></script>
+  <script src="{% static 'assets/js/isotope.pkgd.min.js' %}"></script>
   <!--====== Magnific Popup js ======-->
-  <script src="assets/js/jquery.magnific-popup.min.js"></script>
+  <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
   <!--====== inview js ======-->
-  <script src="assets/js/jquery.inview.min.js"></script>
+  <script src="{% static 'assets/js/jquery.inview.min.js' %}"></script>
   <!--====== counterup js ======-->
-  <script src="assets/js/jquery.countTo.js"></script>
+  <script src="{% static 'assets/js/jquery.countTo.js' %}"></script>
   <!--====== Nice Select ======-->
-  <script src="assets/js/jquery.nice-select.min.js"></script>
+  <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
   <!--====== Bootstrap datepicker ======-->
-  <script src="assets/js/bootstrap-datepicker.js"></script>
+  <script src="{% static 'assets/js/bootstrap-datepicker.js' %}"></script>
   <!--====== Ion Rangeslider ======-->
-  <script src="assets/js/ion.rangeSlider.min.js"></script>
+  <script src="{% static 'assets/js/ion.rangeSlider.min.js' %}"></script>
   <!--====== Jquery Countdown ======-->
-  <script src="assets/js/jquery.countdown.min.js"></script>
+  <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
   <!--====== Wow JS ======-->
-  <script src="assets/js/wow.min.js"></script>
+  <script src="{% static 'assets/js/wow.min.js' %}"></script>
   <!--====== Mapbox Map ======-->
-  <script src="assets/js/leaflet.js"></script>
-  <script src="assets/js/mapbox-gl.min.js"></script>
-  <script src="assets/js/map.js"></script>
+  <script src="{% static 'assets/js/leaflet.js' %}"></script>
+  <script src="{% static 'assets/js/mapbox-gl.min.js' %}"></script>
+  <script src="{% static 'assets/js/map.js' %}"></script>
   <!--====== Main js ======-->
-  <script src="assets/js/main.js"></script>
+  <script src="{% static 'assets/js/main.js' %}"></script>
 </body>
 
 

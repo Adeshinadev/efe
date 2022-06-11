@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -10,36 +11,35 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!--====== Title ======-->
-    <title> Nominate - EFE </title>
+    <title> EFE - Nominate </title>
     <!--====== Favicon Icon ======-->
-   <link rel="shortcut icon" href="assets/img/logo.png" type="img/png" />
+    <link rel="shortcut icon" href="{% static 'assets/img/logo.png' %}" type="img/png" />
     <!--====== Animate Css ======-->
-    <link rel="stylesheet" href="assets/css/animate.min.css">
+    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
     <!--====== Bootstrap css ======-->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
     <!--====== Fontawesome css ======-->
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}" />
     <!--====== Flaticon css ======-->
-    <link rel="stylesheet" href="assets/css/flaticon.css" />
-    <link rel="stylesheet" href="assets/fonts/flaticon/flaticon-2.css" />
-
+    <link rel="stylesheet" href="{% static 'assets/css/flaticon.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/fonts/flaticon/flaticon-2.css' %}" />
     <!--====== Magnific Popup css ======-->
-    <link rel="stylesheet" href="assets/css/magnific-popup.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}" />
     <!--====== Owl Carousel css ======-->
-    <link rel="stylesheet" href="assets/css/slick.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}" />
     <!--====== Nice Select ======-->
-    <link rel="stylesheet" href="assets/css/nice-select.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}" />
     <!--====== Mapbox ======-->
-    <link rel="stylesheet" href="assets/css/leaflet.css" />
-    <link rel="stylesheet" href="assets/css/mapbox-gl.min.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/leaflet.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/mapbox-gl.min.css' %}" />
     <!--====== Bootstrap Datepicker ======-->
-    <link rel="stylesheet" href="assets/css/bootstrap-datepicker.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datepicker.css' %}" />
     <!--====== Ion Rangeslider ======-->
-    <link rel="stylesheet" href="assets/css/ion.rangeSlider.min.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/ion.rangeSlider.min.css' %}" />
     <!--====== Default css ======-->
-    <link rel="stylesheet" href="assets/css/default.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/default.css' %}" />
     <!--====== Style css ======-->
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
 </head>
 
 <body>
@@ -75,12 +75,12 @@
           <div class="nav-container d-flex align-items-center justify-content-between">
             <!-- Site Logo -->
             <div class="site-logo site-logo-text">
-              <a href="index-2.html">
+              <a href="/">
 
                 <div class="site-logo-text">
 <!--                  <h3>Laramiss</h3>-->
 <!--                  <h6>Luxury Pieces</h6>-->
-                    <img src="assets/img/logo.png" alt="Logo" width="53" height="60">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="Logo" width="53" height="60">
                 </div>
               </a>
             </div>
@@ -100,19 +100,32 @@
 
 
 
-
                         <li class="menu-item">
-                        <a href="shop-left.html">
-                          Home
-                        </a>
-                      </li>
-
-
-
-                        <li class="menu-item"> <a href="contact.html">
-                          Contact
+                          <a href="/">
+                            Home
                           </a>
                         </li>
+                        <li class="menu-item">
+                          <a href="{% url 'gallery' %}">
+                            Gallery
+                          </a>
+                        </li>
+                        <li class="menu-item">
+                          <a href="{% url 'about' %}">
+                            About
+                          </a>
+                        </li>
+                        <li class="menu-item">
+                          <a href="{% url 'shop' %}">
+                            Shop
+                          </a>
+                        </li>
+                        <li class="menu-item">
+                        <a href="{% url 'contact' %}">
+                          Contact
+                        </a>
+                      </li>
+              
                       </ul>
                     </nav>
                   </div>
@@ -153,12 +166,12 @@
           <div class="sigma-mobile-header-inner">
             <!-- Site Logo -->
             <div class="site-logo site-logo-text">
-              <a href="index-2.html">
+              <a href="/">
 
                 <div class="site-logo-text">
 <!--                  <h3>Laramiss</h3>-->
 <!--                  <h6>Luxury Pieces</h6>-->
-                    <img src="assets/img/logo.png" alt="Logo" width="53" height="60">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="Logo" width="53" height="60">
                 </div>
               </a>
             </div>
@@ -179,15 +192,30 @@
 
 
           <li class="menu-item">
-            <a href="about.html">
-            Home
+            <a href="/">
+              Home
             </a>
           </li>
           <li class="menu-item">
-            <a href="contact.html">
-            Contact
+            <a href="{% url 'gallery' %}">
+              Gallery
             </a>
           </li>
+          <li class="menu-item">
+            <a href="{% url 'about' %}">
+              About
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="{% url 'shop' %}">
+              Shop
+            </a>
+          </li>
+          <li class="menu-item">
+          <a href="{% url 'contact' %}">
+            Contact
+          </a>
+        </li>
 
 
         </ul>
@@ -292,89 +320,43 @@
 <!--    </section>-->
     <!--====== BREADCRUMB PART END ======-->
     <!--====== SHOP SECTION START ======-->
-    <section class="checkout pt-120 pb-120">
+    <section class="checkout pt-120 pb-120 mt-100" >
         <div class="container">
-            <form method="post">
-                <div class="row">
-
-                        <div class="checkout-form">
-                            <h4>Nominate Brand or Persons</h4>
-                            <div class="row">
-                                <div class="col-xl-6 input-group input-group-two mb-20">
-                                    <label>Full Name
-                                      <span class="text-danger">*</span>
+            <h2 class="mb-20">Nominate your Favorite Brands</h2>
+            {% for message in messages%}
+            <div class="alert alert-warning" role="alert">
+              {{message}}
+            </div>
+            {% endfor %}
+            <form action="{% url 'nominate' %}" method="post">
+              {% csrf_token %}
+            <div class="col-12 input-group input-group-two mb-20">
+                                    <label> Your Email
                                     </label>
-                                    <input type="text" placeholder="First name" name="fname">
-                                </div>
-                                <div class="col-xl-6 input-group input-group-two mb-20">
-                                    <label>Brand Name
-                                      <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" placeholder="Last name" name="lname">
+                                    <input type="Email" placeholder="example@email.com" name="email" required>
                                 </div>
                                 <div class="col-12 input-group input-group-two mb-20">
-                                    <label>Email
+                                    <label>Brand Name
                                     </label>
-                                    <input type="Email" placeholder="example@email.com" name="email">
+                                    <input type="text" placeholder="Brand Name" name="brand_name" required>
                                 </div>
                                 <div class="col-12 input-group input-group-two mb-20">
                                     <label>category
                                         <span class="text-danger">*</span>
                                     </label>
-                                    <select>
+                                    <select name="category" required>
+                                      
                                         <option value selected="">Select A Category...</option>
-                                        <option value="United Kingdom">United Kingdom</option>
-                                        <option value="Australia">Australia</option>
-                                        <option value="Germany">Germany</option>
-                                        <option value="France">France</option>
-                                        <option value="UAE">United Arab Emirates</option>
+                                        {% for category in categories %}
+                                        <option value="{{category.id}}">{{category.name}}</option>
+                                        {% endfor %}
+                                        
                                     </select>
+                                    <button type="submit" class="main-btn btn-filled mt-20 login-btn">Nominate</button>
                                 </div>
-<!--                                <div class="col-12 input-group input-group-two mb-20">-->
-<!--                                    <label>Brand Address-->
-<!--                                      <span class="text-danger">*</span>-->
-<!--                                    </label>-->
-<!--                                    <input type="text" placeholder="Your Address" name="address" required="">-->
-<!--                                </div>-->
-<!--                                <div class="col-12 input-group input-group-two mb-20">-->
-<!--                                    <label>City-->
-<!--                                      <span class="text-danger">*</span>-->
-<!--                                    </label>-->
-<!--                                    <input type="text" placeholder="City" name="city" required="">-->
-<!--                                </div>-->
-<!--                                <div class="col-xl-6 input-group input-group-two mb-20">-->
-<!--                                    <label>Last Name-->
-<!--                                      <span class="text-danger">*</span>-->
-<!--                                    </label>-->
-<!--                                    <input type="text" placeholder="Phone Number" name="number" required="">-->
-<!--                                </div>-->
-<!--                                <div class="col-xl-6 input-group input-group-two mb-20">-->
-<!--                                    <label>Email Address-->
-<!--                                      <span class="text-danger">*</span>-->
-<!--                                    </label>-->
-<!--                                    <input type="text" placeholder="Your Email" name="lname" required="">-->
-<!--                                </div>-->
-                               <div class="col-12 input-group input-group-two mb-20">
-                                    <label>Brand phone (optional)
-                                    </label>
-                                    <input type="text" placeholder="07089367002" name="phone">
-                                </div>
-                                <div class="col-12 input-group input-group-two">
-                                    <label>Brand Address
-                                    </label>
-                                    <textarea placeholder="Type brand Address" name="address" rows="7"></textarea>
-                                </div>
-                            </div>
-                        </div>
+                                
+                              </form>
 
-
-
-
-
-
-
-                </div>
-            </form>
         </div>
     </section>
     <!--====== SHOP SECTION END ======-->
@@ -551,37 +533,37 @@
     <!--====== Modal Popup End ======-->
 
     <!--====== jquery js ======-->
-    <script src="assets/js/vendor/modernizr-3.6.0.min.js"></script>
-    <script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
-    <!--====== Bootstrap js ======-->
-    <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/popper.min.js"></script>
-    <!--====== Slick js ======-->
-    <script src="assets/js/slick.min.js"></script>
-    <!--====== Isotope js ======-->
-    <script src="assets/js/isotope.pkgd.min.js"></script>
-    <!--====== Magnific Popup js ======-->
-    <script src="assets/js/jquery.magnific-popup.min.js"></script>
-    <!--====== inview js ======-->
-    <script src="assets/js/jquery.inview.min.js"></script>
-    <!--====== counterup js ======-->
-    <script src="assets/js/jquery.countTo.js"></script>
-    <!--====== Nice Select ======-->
-    <script src="assets/js/jquery.nice-select.min.js"></script>
-    <!--====== Bootstrap datepicker ======-->
-    <script src="assets/js/bootstrap-datepicker.js"></script>
-    <!--====== Ion Rangeslider ======-->
-    <script src="assets/js/ion.rangeSlider.min.js"></script>
-    <!--====== Jquery Countdown ======-->
-    <script src="assets/js/jquery.countdown.min.js"></script>
-    <!--====== Wow JS ======-->
-    <script src="assets/js/wow.min.js"></script>
-    <!--====== Mapbox Map ======-->
-    <script src="assets/js/leaflet.js"></script>
-    <script src="assets/js/mapbox-gl.min.js"></script>
-    <script src="assets/js/map.js"></script>
-    <!--====== Main js ======-->
-    <script src="assets/js/main.js"></script>
+    <script src="{% static 'assets/js/vendor/modernizr-3.6.0.min.js' %}"></script>
+  <script src="{% static 'assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
+  <!--====== Bootstrap js ======-->
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/popper.min.js' %}"></script>
+  <!--====== Slick js ======-->
+  <script src="{% static 'assets/js/slick.min.js' %}"></script>
+  <!--====== Isotope js ======-->
+  <script src="{% static 'assets/js/isotope.pkgd.min.js' %}"></script>
+  <!--====== Magnific Popup js ======-->
+  <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
+  <!--====== inview js ======-->
+  <script src="{% static 'assets/js/jquery.inview.min.js' %}"></script>
+  <!--====== counterup js ======-->
+  <script src="{% static 'assets/js/jquery.countTo.js' %}"></script>
+  <!--====== Nice Select ======-->
+  <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+  <!--====== Bootstrap datepicker ======-->
+  <script src="{% static 'assets/js/bootstrap-datepicker.js' %}"></script>
+  <!--====== Ion Rangeslider ======-->
+  <script src="{% static 'assets/js/ion.rangeSlider.min.js' %}"></script>
+  <!--====== Jquery Countdown ======-->
+  <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
+  <!--====== Wow JS ======-->
+  <script src="{% static 'assets/js/wow.min.js' %}"></script>
+  <!--====== Mapbox Map ======-->
+  <script src="{% static 'assets/js/leaflet.js' %}"></script>
+  <script src="{% static 'assets/js/mapbox-gl.min.js' %}"></script>
+  <script src="{% static 'assets/js/map.js' %}"></script>
+  <!--====== Main js ======-->
+  <script src="{% static 'assets/js/main.js' %}"></script>
 </body>
 
 
