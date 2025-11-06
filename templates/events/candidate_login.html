@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+<style>
+.btn-gold {
+  background-color: #006400;
+  color: #ffcc00;
+  font-weight: 800;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-gold:hover,
+.btn-gold:focus {
+  background-color: #004d00;
+  color: #ffcc00;
+  box-shadow: 0 6px 15px rgba(255, 204, 0, 0.5);
+}
+</style>
+
+{% block title %}Candidate Results – {{ event.title }}{% endblock %}
+
+{% block content %}
+<section class="event-surface d-flex flex-column justify-content-center align-items-center" style="min-height: calc(100vh - 100px);">
+  <div class="container" style="max-width:680px;">
+    <div class="sigma-card p-30">
+      <h3 class="mb-20 text-center">Candidate Results – {{ event.title }}</h3>
+      <p class="muted mb-20 text-center">Enter the credentials provided by the organizers.</p>
+
+      {% if messages %}
+        {% for m in messages %}
+          <div class="alert alert-{{ m.tags }} mb-20">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="id_email"><strong>Email</strong></label>
+          <input type="email" id="id_email" name="email" required class="form-control"
+                 value="{{ email|default:'' }}" autocomplete="username" />
+        </div>
+        <div class="form-group mt-2">
+          <label for="id_password"><strong>Password</strong></label>
+          <input type="password" id="id_password" name="password" required class="form-control"
+                 autocomplete="current-password" />
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+          <button
+            style="background-color: #007BFF; color: #ffffff; font-weight: 800; padding: 10px 20px; border-radius: 6px; border: none; transition: background-color 0.2s;"
+            onmouseover="this.style.backgroundColor='#0056b3'; this.style.color='#ffffff';"
+            onmouseout="this.style.backgroundColor='#007BFF'; this.style.color='#ffffff';"
+            onfocus="this.style.backgroundColor='#0056b3'; this.style.color='#ffffff';"
+            onblur="this.style.backgroundColor='#007BFF'; this.style.color='#ffffff';"
+          >Sign in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

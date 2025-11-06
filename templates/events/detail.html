@@ -1,0 +1,272 @@
+{# templates/events/detail.html #}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ event.title }} – Event{% endblock %}
+
+{% block head_extra %}
+  <meta property="og:title" content="{{ event.title }}">
+  {% if event.description %}<meta property="og:description" content="{{ event.description|striptags|truncatechars:155 }}">{% endif %}
+  {% if event.banner_image %}<meta property="og:image" content="{{ event.banner_image.url }}">{% endif %}
+
+<style>
+  /* ===== Brand palette (dark + gold) ===== */
+  :root{
+    --bg:#0e0f12; --panel:#171a1f; --panel-2:#121419; --ink:#e8eaf0;
+    --muted:#a7adb9; --line:rgba(255,255,255,.06); --gold:#d4af37; --gold-2:#c59d27;
+  }
+
+  body .event-surface, body{background:var(--bg)!important;color:var(--ink)}
+
+  /* Cards */
+  .sigma-card{background:var(--panel);border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+  .p-30{padding:30px}.mb-12{margin-bottom:12px}.mr-10{margin-right:10px}.mt-1{margin-top:2px}
+  .muted{color:var(--muted)}
+
+  /* ===== HERO =====
+     1) Push hero below the sticky header (so the title is not hidden)
+     2) Make title highly legible and lower on the image
+  */
+  .event-hero{
+    position:relative;
+    margin-top:84px;                 /* <-- clears the sticky header on desktop */
+    background-image:url({% if event.banner_image %}{{ event.banner_image.url }}{% else %}{% static 'assets/img/bg/04.jpg' %}{% endif %});
+    background-size:cover;background-position:center;
+    min-height:280px;border-bottom:1px solid var(--line);
+    clip-path: inset(0 0 0 0 round 0 0 14px 14px);
+  }
+  @media (min-width:576px){ .event-hero{min-height:320px} }
+  @media (min-width:992px){ .event-hero{min-height:360px} }
+  .event-hero::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.65) 55%, rgba(0,0,0,.55) 100%);
+  }
+  .event-hero .inner{
+    position:relative;z-index:1;
+    /* Put the title lower on the hero and give top room on mobile too */
+    padding: 72px 0 56px;
+    text-align:center;color:#fff;
+  }
+  @media (min-width:992px){
+    .event-hero .inner{ padding: 96px 0 64px; }
+  }
+  .event-hero .title{
+    margin:0;line-height:1.1;text-transform:uppercase;font-weight:800;
+    font-size:clamp(26px,4.6vw,44px); letter-spacing:.3px;
+    text-shadow:0 4px 24px rgba(0,0,0,.65);
+  }
+
+  /* ===== STATUS STRIP =====
+     - Put details first (left)
+     - Make actions (countdown + button) right on desktop, stacked on mobile
+     - Prevent wrapping/truncation on small screens
+  */
+  .status-strip{background:var(--panel-2);padding:16px 0;border-bottom:1px solid var(--line);box-shadow:inset 0 -1px 0 var(--line)}
+  .status-grid{
+    display:grid; gap:14px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width:992px){
+    .status-grid{ grid-template-columns: 1fr auto; align-items:center; }
+  }
+
+  .event-meta{
+    display:flex;flex-direction:column;gap:10px;
+    padding:18px; border:1px solid var(--line); border-radius:14px; background:#0f1217;
+  }
+  .event-meta .row{display:flex; align-items:center; gap:10px; color:var(--ink); }
+  .event-meta i{ color:var(--gold); min-width:18px; }
+
+  .status-actions{
+    display:flex; gap:12px; align-items:center; flex-wrap:nowrap;
+  }
+  @media (max-width: 576px){
+    .status-actions{
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .status-actions .pill,
+    .status-actions .btn-gold,
+    .status-actions .btn-gold-ghost{
+      width: 100%;
+      text-align: center;
+    }
+  }
+  .pill{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:10px 14px;border-radius:999px;
+    background:#0f1217;border:1px solid var(--line); color:var(--ink); font-weight:700;
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+    white-space:nowrap;                    /* <= keep it on one line */
+  }
+  .pill i{color:var(--gold)}
+  .countdown{font-variant-numeric:tabular-nums;white-space:nowrap}  /* <= never break */
+
+  /* Buttons (gold) */
+  .btn-gold{
+    background:var(--gold);color:#111;border:1px solid var(--gold);
+    padding:10px 16px;border-radius:10px;font-weight:800;
+    transition:.18s transform,.18s box-shadow,.18s background; white-space:nowrap;
+  }
+  .btn-gold:hover{background:var(--gold-2);transform:translateY(-1px);box-shadow:0 10px 24px rgba(212,175,55,.25)}
+
+  .btn-gold-ghost{
+    background:transparent;color:var(--gold);border:1px solid var(--gold);
+    padding:10px 16px;border-radius:10px;font-weight:800;
+    transition:.18s transform,.18s box-shadow,.18s background,.18s color;
+    white-space:nowrap;                   /* <= never wrap "Not started" */
+  }
+  .btn-gold-ghost:hover{background:rgba(212,175,55,.08);transform:translateY(-1px);box-shadow:0 10px 24px rgba(212,175,55,.18)}
+
+  /* Tighter on small phones so nothing gets clipped */
+  @media (max-width:420px){
+    .pill{ padding:8px 12px; font-size:.92rem; }
+    .btn-gold-ghost, .btn-gold{ padding:8px 12px; font-size:.92rem; }
+  }
+
+  /* Share on dark */
+  .share a{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:#0f1217;color:var(--ink);transition:.18s}
+  .share a + a{margin-left:8px}
+  .share a:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.4);background:#151922}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include "events/_vote_modal.html" %}
+
+  <!-- HERO (banner background only; no standalone image later) -->
+  <section class="event-hero">
+    <div class="container inner">
+      <h1 class="title">{{ event.title }}</h1>
+    </div>
+  </section>
+
+  <!-- STATUS + CTA -->
+  <section class="status-strip">
+    <div class="container">
+      <div class="status-grid">
+
+        <!-- Left: quick facts -->
+        <div class="event-meta">
+          <div class="row">
+            <i class="far fa-calendar-alt"></i>
+            <span><strong>Starts:</strong> {{ event.start_at|date:"D, M j, Y g:i A" }}</span>
+          </div>
+          <div class="row">
+            <i class="far fa-calendar-check"></i>
+            <span><strong>Ends:</strong> {{ event.end_at|date:"D, M j, Y g:i A" }}</span>
+          </div>
+          <div class="row">
+            <i class="far fa-coins"></i>
+            <span><strong>Price per vote:</strong> {{ event.currency }} {{ event.vote_unit_price }}</span>
+          </div>
+        </div>
+
+        <!-- Right: countdown + action -->
+        <div class="status-actions">
+          {% if not has_started and not has_ended %}
+            <span class="pill">
+              <i class="far fa-hourglass-start"></i>
+              <span>Starts in</span>
+              <span class="countdown" id="cd-start" data-target="{{ event.start_at|date:'c' }}"></span>
+            </span>
+            <button type="button" class="btn-gold-ghost" data-toggle="modal" data-target="#voteModal">
+              Voting not started
+            </button>
+          {% elif is_active %}
+            <span class="pill">
+              <i class="far fa-bolt"></i>
+              <span>Ends in</span>
+              <span class="countdown" id="cd-end" data-target="{{ event.end_at|date:'c' }}"></span>
+            </span>
+            <button type="button" class="btn-gold" data-toggle="modal" data-target="#voteModal">
+              Vote
+            </button>
+          {% else %}
+            <span class="pill">
+              <i class="far fa-flag-checkered"></i>
+              Voting ended · {{ event.end_at|date:"M j, Y g:i A" }}
+            </span>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY -->
+  <section class="event-surface pt-50 pb-60">
+    <div class="container">
+      <div class="row">
+        <!-- Main column -->
+        <div class="col-lg-8 mb-40">
+          <div class="sigma-card p-30">
+            <div class="section-title mb-20">
+              <span class="title-tag">About this event</span>
+            </div>
+            {% if event.description %}
+              <div class="content">{{ event.description|safe }}</div>
+            {% else %}
+              <p class="muted mb-0">Details will be announced soon. Stay tuned!</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Side column -->
+        <div class="col-lg-4 mb-40">
+          <div class="sigma-card p-30">
+            <h4 class="mb-20">Share</h4>
+            <div class="share">
+              <a target="_blank" rel="noopener"
+                 href="https://twitter.com/intent/tweet?text={{ event.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a target="_blank" rel="noopener"
+                 href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a target="_blank" rel="noopener"
+                 href="https://wa.me/?text={{ event.title|urlencode }}%20-%20{{ request.build_absolute_uri|urlencode }}">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+
+  <a href="#" class="back-to-top" id="backToTop"><i class="fal fa-angle-double-up"></i></a>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    // Countdown with auto-refresh at boundary
+    function startCountdown(el, targetISO){
+      if (!el || !targetISO) return;
+      const target = new Date(targetISO).getTime();
+      const fmt = n => String(n).padStart(2,"0");
+      function tick(){
+        const now = Date.now();
+        let diff = Math.max(0, target - now);
+        let s = Math.floor(diff/1000);
+        const d = Math.floor(s/86400); s -= d*86400;
+        const h = Math.floor(s/3600);  s -= h*3600;
+        const m = Math.floor(s/60);    s -= m*60;
+        el.textContent = (d? d+"d " : "") + `${fmt(h)}h ${fmt(m)}m ${fmt(s)}s`;
+        if (diff <= 0){ clearInterval(t); location.reload(); }
+      }
+      tick(); const t = setInterval(tick, 1000);
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      const a = document.getElementById('cd-start');
+      const b = document.getElementById('cd-end');
+      if (a) startCountdown(a, a.dataset.target);
+      if (b) startCountdown(b, b.dataset.target);
+    });
+  </script>
+{% endblock %}

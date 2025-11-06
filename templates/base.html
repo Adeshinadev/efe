@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>{% block title %}EFE{% endblock %}</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{% static 'assets/img/logo.png' %}" type="img/png" />
+
+  <!-- CSS (global) -->
+  <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/flaticon.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/fonts/flaticon/flaticon-2.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/leaflet.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/mapbox-gl.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datepicker.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/ion.rangeSlider.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/default.css' %}" />
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+  {% include "partials/header.html" %}
+
+  {% block content %}{% endblock %}
+
+  {% include "partials/footer.html" %}
+
+  <!-- JS (global) -->
+  <script src="{% static 'assets/js/vendor/modernizr-3.6.0.min.js' %}"></script>
+  <script src="{% static 'assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/popper.min.js' %}"></script>
+  <script src="{% static 'assets/js/slick.min.js' %}"></script>
+  <script src="{% static 'assets/js/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.inview.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.countTo.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+  <script src="{% static 'assets/js/bootstrap-datepicker.js' %}"></script>
+  <script src="{% static 'assets/js/ion.rangeSlider.min.js' %}"></script>
+  <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
+  <script src="{% static 'assets/js/wow.min.js' %}"></script>
+  <script src="{% static 'assets/js/leaflet.js' %}"></script>
+  <script src="{% static 'assets/js/mapbox-gl.min.js' %}"></script>
+  <script src="{% static 'assets/js/map.js' %}"></script>
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,141 @@
+{# Header + mobile menu + offcanvas. Assumes {% load static %} already in base.html #}
+{% load static %}
+
+<header class="header-three header-absolute sticky-header sigma-header">
+  <div class="header-top">
+    <div class="container-fluid container-custom-three"></div>
+  </div>
+
+  <div class="main-menu-area sticky-header">
+    <div class="container-fluid container-custom-three">
+      <div class="nav-container d-flex align-items-center justify-content-between">
+        <!-- Logo -->
+        <div class="site-logo site-logo-text">
+          <a href="/">
+            <div class="site-logo-text">
+              <img src="{% static 'assets/img/logo.png' %}" alt="Logo" width="53" height="60">
+            </div>
+          </a>
+        </div>
+
+        <!-- Main Menu -->
+        <div class="nav-menu d-lg-flex align-items-center justify-content-between">
+          <div class="navbar-close">
+            <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
+          </div>
+
+          <div class="sigma-header-nav">
+            <div class="container">
+              <div class="sigma-header-nav-inner">
+                <nav>
+                  <ul class="sigma-main-menu">
+                    <li class="menu-item"><a href="{% url 'shop' %}">Shop</a></li>
+                    <li class="menu-item"><a href="{% url 'contact' %}">Contact</a></li>
+                    <li class="menu-item"><a href="{% static 'assets/docs/de_elegant_profile.pdf' %}">About</a></li>
+                    <li class="menu-item"><a href="{% url 'efe_portal' %}">Efe portal</a></li>
+                    <li class="menu-item"><a href="{% url 'gallery' %}">Gallery</a></li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right buttons -->
+<!--        <div class="menu-right-buttons">-->
+<!--          <div class="login-btn">-->
+<!--            <a href="{% url 'login' %}" id="loginBtn"><i class="fal fa-user"></i></a>-->
+<!--          </div>-->
+
+<!--          <div class="search">-->
+<!--            <a href="#" class="search-icon" id="searchBtn">-->
+<!--              <i class="fal fa-search open-icon"></i>-->
+<!--              <i class="fal fa-times close-icon"></i>-->
+<!--            </a>-->
+<!--            <div class="search-form">-->
+<!--              <form action="#">-->
+<!--                <input type="text" placeholder="Search your keyword...">-->
+<!--                <button type="submit"><i class="far fa-search"></i></button>-->
+<!--              </form>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="navbar-toggler">-->
+<!--            <span></span><span></span><span></span>-->
+<!--          </div>-->
+<!--        </div>-->
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Header -->
+  <div class="sigma-mobile-header">
+    <div class="container">
+      <div class="sigma-mobile-header-inner">
+        <div class="site-logo site-logo-text">
+          <a href="/">
+            <div class="site-logo-text">
+              <img src="{% static 'assets/img/logo.png' %}" alt="Logo" width="53" height="60">
+            </div>
+          </a>
+        </div>
+        <div class="sigma-hamburger-menu">
+          <div class="sigma-menu-btn"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <aside class="sigma-mobile-menu">
+    <ul class="sigma-main-menu">
+      <li class="menu-item"><a href="{% url 'shop' %}">Shop</a></li>
+      <li class="menu-item"><a href="{% url 'contact' %}">Contact</a></li>
+      <li class="menu-item"><a href="{% url 'about' %}">About</a></li>
+      <li class="menu-item"><a href="{% url 'efe_portal' %}">Efe portal</a></li>
+      <li class="menu-item"><a href="{% url 'gallery' %}">Gallery</a></li>
+    </ul>
+  </aside>
+</header>
+
+<!-- Off-canvas (optional, kept from your page) -->
+<div class="offcanvas-wrapper">
+  <div class="offcanvas-overly"></div>
+  <div class="offcanvas-widget">
+    <a href="#" class="offcanvas-close"><i class="fal fa-times"></i></a>
+
+    <div class="widget search-widget">
+      <h5 class="widget-title">Search room</h5>
+      <form action="#">
+        <input type="text" placeholder="Search your keyword...">
+        <button type="submit"><i class="far fa-search"></i></button>
+      </form>
+    </div>
+
+    <div class="widget about-widget">
+      <h5 class="widget-title">About us</h5>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit...</p>
+    </div>
+
+    <div class="widget nav-widget">
+      <h5 class="widget-title">Our pages</h5>
+      <ul>
+        <li><a href="{% url 'about' %}">About Us</a></li>
+        <li><a href="{% url 'shop' %}">Shop</a></li>
+        <li><a href="{% url 'gallery' %}">Our Gallery</a></li>
+        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+      </ul>
+    </div>
+
+    <div class="widget social-link">
+      <h5 class="widget-title">Contact with us</h5>
+      <ul>
+        <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+        <li><a href="#"><i class="fab fa-behance"></i></a></li>
+        <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+        <li><a href="#"><i class="fab fa-google"></i></a></li>
+      </ul>
+    </div>
+  </div>
+</div>

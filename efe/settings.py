@@ -18,18 +18,26 @@ import django_heroku
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-fce^8qdgh)jqj3rccs1ke@i^hc!j!5^bhhe65amygjr$9356(g'
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("🚨 SECRET_KEY is not set in the environment variables.")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
-ALLOWED_HOSTS = ['deephub.herokuapp.com','192.168.43.134']
-
-
+if DEBUG:
+    PAYSTACK_PUBLIC_KEY = os.getenv("TEST_PAYSTACK_PUBLIC_KEY", "")
+    PAYSTACK_SECRET_KEY = os.getenv("TEST_PAYSTACK_SECRET_KEY", "")
+else:
+    PAYSTACK_PUBLIC_KEY = os.getenv("PAYSTACK_PUBLIC_KEY", "")
+    PAYSTACK_SECRET_KEY = os.getenv("PAYSTACK_SECRET_KEY", "")
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,16 +83,25 @@ WSGI_APPLICATION = 'efe.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'efe',
-        'USER': 'postgres',
-        'PASSWORD': 'intercon',
-        'HOST': 'localhost',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+            'NAME': os.getenv('DB_NAME', os.path.join(BASE_DIR, 'db.sqlite3')),
+            'USER': os.getenv('DB_USER', ''),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', ''),
+            'PORT': os.getenv('DB_PORT', ''),
+        }
+    }
+
 
 
 # Password validation
@@ -111,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Africa/Lagos"
 
 USE_I18N = True
 

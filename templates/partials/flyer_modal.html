@@ -1,0 +1,64 @@
+{% load static %}
+
+<!-- Flyer Modal -->
+<div class="modal fade" id="flyerModal" tabindex="-1" role="dialog" aria-labelledby="flyerModalLabel" aria-hidden="true" data-keyboard="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content flyer-modal-content">
+      <div class="modal-header" style="border:0;">
+        <h5 class="modal-title text-white" id="flyerModalLabel">
+          SOUTH-WEST FASHION WEEK / EKITI FASHION EXHIBITION 2025
+        </h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity:1;font-size:2rem;line-height:1;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-0">
+        <img
+          src="{% static 'assets/img/banner/IMG-20251005-WA0013.jpg' %}"
+          alt="Event Flyer"
+          class="img-fluid w-100 d-block flyer-img"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Auto-open script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      $('#flyerModal').modal({
+        backdrop: true,
+        keyboard: true,
+        show: true
+      });
+    }, 500);
+  });
+</script>
+
+<style>
+  /* Base modal styling */
+  .flyer-modal-content {
+    background: #000;
+    border: 0;
+    overflow: hidden;
+  }
+  .flyer-img {
+    object-fit: contain;
+    background: #000;
+    max-height: 85vh;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 576px) {
+    .flyer-img {
+      max-height: 60vh;  /* simply scale down the image */
+    }
+    .modal-dialog {
+      margin: 1rem;     /* add small margins so it's nicely centered */
+    }
+    .modal-content {
+      border-radius: 12px;
+    }
+  }
+</style>

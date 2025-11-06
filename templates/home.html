@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}EFE – Home{% endblock %}
+
+{% block head_extra %}
+  <link rel="stylesheet" href="https://unpkg.com/swiper@11/swiper-bundle.min.css">
+  <style>
+    /* Compact CTA button just for the Bestselling Products section */
+    .cta-compact {
+      font-size: 0.95rem;
+      padding: 10px 18px;
+      line-height: 1.2;
+      border-radius: 4px;
+    }
+    /* Mobile: smaller button + space below it before the slider */
+    @media (max-width: 991.98px) {
+      .cta-compact {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+        margin-bottom: 28px !important;
+      }
+    }
+
+    /* --- Bestselling Products: force uniform card & image sizes --- */
+    .best-products .swiper-wrapper { align-items: stretch; }
+    .best-products .swiper-slide { height: auto; }
+    .best-products .shop-box { display: flex; flex-direction: column; height: 100%; }
+    .best-products .shop-box .thumb {
+      position: relative;
+      height: 300px; /* mobile base */
+      overflow: hidden;
+    }
+    .best-products .shop-box .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* crops to fill while keeping aspect ratio */
+      display: block;
+    }
+    .best-products .shop-box .desc {
+      margin-top: auto; /* push text to the bottom so all cards align */
+      padding-top: 12px;
+    }
+    /* Medium screens */
+    @media (min-width: 768px) {
+      .best-products .shop-box .thumb { height: 340px; }
+    }
+    /* Large screens */
+    @media (min-width: 992px) {
+      .best-products .shop-box .thumb { height: 380px; }
+    }
+
+    /* Show pointer on hover for clickable product cards */
+    .clickable-card { cursor: pointer; }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+  <!--====== PRELOADER ======-->
+  <div class="preloader">
+    <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 512 512" class="">
+      <path d="M369.853,250.251l-100-241C267.53,3.65,262.062,0,255.999,0s-11.531,3.65-13.854,9.251l-100,241
+        c-1.527,3.681-1.527,7.817,0,11.498l100,241c2.323,5.601,7.791,9.251,13.854,9.251s11.531-3.65,13.854-9.251l100-241
+        C371.381,258.068,371.381,253.932,369.853,250.251z M255.999,457.861L172.239,256l83.76-201.861L339.759,256L255.999,457.861z"
+        fill="#ffffff" />
+      <path class="diamond-spark spark-1"
+        d="M139.606,118.393l-63-63c-5.858-5.857-15.356-5.857-21.213,0c-5.858,5.858-5.858,15.356,0,21.213l63,63
+        c2.928,2.929,6.767,4.394,10.606,4.394s7.678-1.465,10.607-4.394C145.465,133.748,145.465,124.25,139.606,118.393z"
+        fill="#ffffff" />
+      <path class="diamond-spark spark-2"
+        d="M456.607,55.393c-5.858-5.857-15.356-5.857-21.213,0l-63,63c-5.858,5.858-5.858,15.356,0,21.213
+        c2.928,2.929,6.767,4.394,10.606,4.394s7.678-1.465,10.607-4.394l63-63C462.465,70.748,462.465,61.25,456.607,55.393z"
+        fill="#ffffff" />
+      <path class="diamond-spark spark-3"
+        d="M139.606,372.393c-5.858-5.857-15.356-5.857-21.213,0l-63,63c-5.858,5.858-5.858,15.356,0,21.213
+        C58.322,459.535,62.16,461,65.999,461s7.678-1.465,10.607-4.394l63-63C145.465,387.748,145.465,378.25,139.606,372.393z"
+        fill="#ffffff" />
+      <path class="diamond-spark spark-4"
+        d="M456.607,435.393l-63-63c-5.858-5.857-15.356-5.857-21.213,0c-5.858,5.858-5.858,15.356,0,21.213l63,63
+        c2.928,2.929,6.767,4.394,10.606,4.394s7.678-1.465,10.607-4.394C462.465,450.748,462.465,441.25,456.607,435.393z"
+        fill="#ffffff" />
+    </svg>
+  </div>
+
+  <!--====== BANNER ======-->
+  <section class="banner-area banner-style-one position-relative">
+    <div class="circle-out"></div>
+
+    <div class="d-none d-md-block vertical-text wow fadeIn" data-wow-delay=".3s">
+      <ul>
+        <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+        <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+        <li><a href="https://www.instagram.com/ekitifashionexhibition_efe/"><i class="fab fa-instagram"></i> Instagram</a></li>
+      </ul>
+    </div>
+
+    <div class="d-none d-md-block vertical-text right wow fadeIn" data-wow-delay=".3s">
+      <span>Call us on: </span>
+      <span><a href="tel:+2348160089184" aria-label="Call +234 816 008 9184">+234 816 008 9184</a></span>
+    </div>
+
+    <div class="container container-custom-two">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6">
+          <div class="banner-content">
+            <span class="promo-tag wow fadeInDown" data-wow-delay=".3s">Create Your World</span>
+            <h1 class="title wow fadeInLeft" data-wow-delay=".5s">DE ELEGANT<br>EXPERTISE PALAIS</h1>
+            <ul>
+              <li><a class="main-btn btn-filled wow fadeInUp" data-wow-delay=".7s" href="{% url 'about' %}">ABOUT US</a></li>
+              <li><a class="main-btn btn-border wow fadeInUp" data-wow-delay=".9s" href="{% url 'shop' %}">SHOP</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-lg-6 col-md-6 wow fadeInRight" data-wow-delay="0.5s">
+         <div class="banner-thumb d-none d-md-block">
+  <div class="hero-slider-one">
+    {% if sliders %}
+      {% for slide in sliders %}
+        <div class="single-thumb">
+          <img src="{{ slide.image.url }}" alt="{{ slide.alt_text|default:'slider image' }}">
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="single-thumb"><img src="{% static 'assets/img/banner/file.jpg' %}" alt="images"></div>
+      <div class="single-thumb"><img src="{% static 'assets/img/banner/file4.jpg' %}" alt="images"></div>
+      <div class="single-thumb"><img src="{% static 'assets/img/banner/file5.jpg' %}" alt="images"></div>
+      <div class="single-thumb"><img src="{% static 'assets/img/banner/file2.jpg' %}" alt="images"></div>
+      <div class="single-thumb"><img src="{% static 'assets/img/banner/file3.jpg' %}" alt="images"></div>
+      <div class="single-thumb"><img src="{% static 'assets/img/banner/file6.jpg' %}" alt="images"></div>
+    {% endif %}
+  </div>
+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--====== STATS / CATEGORIES BOXES ======-->
+  <div class="categories-box-layout">
+    <div class="container">
+      <div class="categories-box-layout-inner">
+        <div class="row">
+          <div class="col-lg-3 col-sm-6">
+            <a href="#" class="categories-box">
+              <span class="icon"><i class="flaticon-bracelet"></i></span>
+              <h5 class="title">9+ Years</h5>
+              <p>Delivering top-quality fashion craftsmanship and innovation for over 9 years.</p>
+              <span class="overlay-icon"><i class="flaticon-bracelet"></i></span>
+            </a>
+          </div>
+
+          <div class="col-lg-3 col-sm-6">
+            <a href="#" class="categories-box">
+              <span class="icon"><i class="flaticon-dress"></i></span>
+              <h5 class="title">2,500+</h5>
+              <p>Custom fashion pieces created with precision, passion and attention to detail.</p>
+              <span class="overlay-icon"><i class="flaticon-dress"></i></span>
+            </a>
+          </div>
+
+          <div class="col-lg-3 col-sm-6">
+            <a href="#" class="categories-box">
+              <span class="icon"><i class="flaticon-smile"></i></span>
+              <h5 class="title">3,000+</h5>
+              <p>Happy clients served with unique, made-to-measure fashion experiences.</p>
+              <span class="overlay-icon"><i class="flaticon-smile"></i></span>
+            </a>
+          </div>
+
+          <div class="col-lg-3 col-sm-6">
+            <a href="#" class="categories-box">
+              <span class="icon"><i class="flaticon-education"></i></span>
+              <h5 class="title">500+ Students</h5>
+              <p>Trained and mentored over 500 aspiring fashion students across various programs.</p>
+              <span class="overlay-icon"><i class="flaticon-education"></i></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--====== ABOUT / CEO ======-->
+  <section class="about-section pt-115 pb-115">
+    <div class="container">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-lg-6 col-md-10 wow fadeInLeft" data-wow-delay=".3s">
+          <div class="row about-features-boxes fetaure-masonary">
+            <div class="col-sm-6">
+              <div class="single-feature-box">
+                <div class="icon"></div>
+                <p>Style is a way to say who you are without having to speak.</p>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="single-feature-box only-bg mt-30" style="background-image: url({% static 'assets/img/feature/9.png' %});"></div>
+            </div>
+            <div class="col-sm-6">
+              <div class="single-feature-box only-bg mt-30" style="background-image: url({% static 'assets/img/feature/10.png' %});"></div>
+            </div>
+            <div class="col-sm-6">
+              <div class="single-feature-box dark mt-30">
+                <div class="icon"></div>
+                <p>What you wear is how you present yourself to the world… Fashion is instant language.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 col-md-8 col-sm-10 wow fadeInRight" data-wow-delay=".3s">
+          <div class="abour-text pl-50 pr-50">
+            <div class="section-title mb-30">
+              <span class="title-tag">MEET THE CEO</span>
+              <h2>Owajoba Busayo.</h2>
+            </div>
+            <p>
+              Oluwabusayo Owajoba is the CEO of De-Elegant Expertise Palais, a fashion house based in Ado-Ekiti, Ekiti state…
+              This event attracted big brands like ABUAD, Coca-Cola, Lush Hair etc.
+            </p>
+            <a href="{% static 'assets/docs/de_elegant_profile.pdf' %}" class="main-btn btn-filled mt-40" target="_blank" rel="noopener">Know More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-right-bottom">
+      <div class="about-bottom-img">
+        <img src="{% static 'assets/img/bg/91.png' %}" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!--====== VISION & MISSION ======-->
+  <section class="pt-115 pb-115 bg-white cta-sec" style="background-image: url('{% static 'assets/img/others/mv.png' %}');">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="block-text">
+            <div class="section-title mb-20">
+              <span class="title-tag">OUR VISION</span>
+            </div>
+            <p class="pr-50">
+              To raise a multitude of innovation fashionistas with sense of purpose and fulfillment, and develop individuals to be self-reliant…
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-lg-7">
+          <div class="block-text">
+            <div class="section-title mb-20">
+              <span class="title-tag">OUR MISSION</span>
+            </div>
+            <p class="pr-50">
+              To develop innovative habits in fashion trends and build fashionistas, and also create an environment for self-discovery…
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--====== BESTSELLING PRODUCTS (Swiper) ======-->
+  <section class="pt-115 pb-115 container-wide restaurant-tab-area position-relative">
+    <div class="container">
+      <div class="row">
+        <!-- Left text -->
+        <div class="col-lg-5">
+          <div class="block-text">
+            <div class="section-title mb-20">
+              <span class="title-tag">De-Elegant Expertise Palais</span>
+              <h2>Bestselling Products</h2>
+            </div>
+            <p class="pr-50">
+              De-Elegant Expertise Palais (DEEP) is a fashion enterprise based in Ekiti State. For five years we have backed creativity
+              and youth empowerment through the annual Ekiti Fashion Exhibition.
+            </p>
+            <a href="{% url 'shop' %}" class="main-btn btn-filled mt-40 cta-compact">Shop now</a>
+          </div>
+        </div>
+
+        <!-- Right carousel -->
+        <div class="col-lg-7 best-products" id="bestProducts" data-count="{{ shop|length }}">
+          <div class="swiper" id="bestProductsSwiper">
+            <div class="swiper-wrapper">
+              {% for cloth in shop %}
+              <div class="swiper-slide">
+                <div class="food-box shop-box h-100 clickable-card"
+                     data-wa="https://wa.me/2348160089184?text={{ 'Hi, I am interested in ' | add:cloth.name | urlencode }}">
+                  <div class="thumb">
+                    <img src="{{ cloth.image.url }}" alt="{{ cloth.name }}">
+                    <div class="badges">
+                      <span class="price">New</span>
+                      <span class="price discounted">-10%</span>
+                    </div>
+                    <div class="button-group">
+                      <a href="#"><i class="far fa-heart"></i></a>
+                      <a href="#"><i class="far fa-sync-alt"></i></a>
+                      <a href="#" data-toggle="modal" data-target="#quickViewModal"><i class="far fa-eye"></i></a>
+                    </div>
+                  </div>
+                  <div class="desc mt-auto">
+                    <h4><a href="https://wa.link/hvcoib">{{ cloth.name }}</a></h4>
+                    <a href="https://wa.link/hvcoib" class="link"><i class="fal fa-arrow-right"></i></a>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- arrows -->
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+          </div>
+
+          <!-- Fallback grid when slider disabled -->
+          <div class="fallback-grid d-none" id="bestProductsFallback"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--====== TEXT BLOCK / VIDEO ======-->
+  <section class="text-block with-pattern pt-115 pb-115">
+    <div class="container">
+      <div class="row align-items-center justify-content-center">
+        <div class="col-lg-6 col-md-10 order-2 order-lg-1">
+          <div class="block-text">
+            <div class="section-title mb-20">
+              <span class="title-tag">The Journey So Far</span>
+            </div>
+            <p class="pr-50">
+              A story of passion, community, and innovation — tracing our steps as we build a lasting legacy in the fashion world.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-6 col-md-10 order-1 order-lg-2 wow fadeInRight" data-wow-delay=".3s">
+          <div class="video-wrap video-wrap-two mb-small" style="background-image: url({% static 'assets/img/text-block/ISE_7348.jpg' %});">
+            <a href="https://drive.google.com/file/d/1qfwJYI0Z76aM2kqm0MhC5XtfSflS5O3i/preview" class="popup-video">
+              <i class="fas fa-play"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pattern-wrap"><div class="pattern"></div></div>
+  </section>
+
+{% endblock %}
+
+{% block scripts %}
+  <script defer src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const host = document.getElementById("bestProducts");
+      const total = parseInt(host?.dataset.count || "0", 10);
+      const swiperEl = document.getElementById("bestProductsSwiper");
+      const fallbackEl = document.getElementById("bestProductsFallback");
+
+      function toFallback() {
+        if (!host || !swiperEl || !fallbackEl) return;
+        host.classList.add("no-swiper");
+        fallbackEl.classList.remove("d-none");
+        const slides = swiperEl.querySelectorAll(".swiper-slide");
+        slides.forEach(slide => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "grid-item";
+          if (slide.firstElementChild) wrapper.appendChild(slide.firstElementChild);
+          fallbackEl.appendChild(wrapper);
+        });
+        swiperEl.remove();
+      }
+
+      function perView() {
+        const w = window.innerWidth;
+        if (w >= 992) return 3;  // desktop 3 per view
+        return 2;                // mobile/tablet 2 per view
+      }
+
+      const pv = perView();
+      const shouldSlide = total > pv;
+
+      if (!shouldSlide) {
+        toFallback();
+        return;
+      }
+
+      // Init Swiper
+      // eslint-disable-next-line no-undef
+      new Swiper("#bestProductsSwiper", {
+        loop: total > perView(),
+        watchOverflow: false,
+        observer: true,
+        observeParents: true,
+        autoplay: { delay: 3500, disableOnInteraction: false },
+        speed: 600,
+        spaceBetween: 24,
+        slidesPerView: 1.3,
+        slidesPerGroup: 1,
+        breakpoints: {
+          992: { slidesPerView: 2.3, slidesPerGroup: 1 }
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev"
+        },
+        grabCursor: true,
+        on: {
+          init(sw) { sw.update(); },
+          resize(sw) { sw.update(); }
+        }
+      });
+
+      // Make entire product cards open WhatsApp with the cloth name
+      function enableCardWhatsAppClicks(scopeSelector) {
+        document.querySelectorAll(scopeSelector + ' .shop-box.clickable-card').forEach(function(card){
+          var url = card.getAttribute('data-wa');
+          if (!url) return;
+
+          // Any click inside the card should go to WhatsApp
+          card.addEventListener('click', function(e){
+            if (e.target.closest('.swiper-button-next, .swiper-button-prev')) return;
+            e.preventDefault();
+            window.open(url, '_blank');
+          });
+
+          // Force all inner links/buttons to also go to WhatsApp
+          card.querySelectorAll('a').forEach(function(a){
+            a.addEventListener('click', function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              window.open(url, '_blank');
+            });
+          });
+        });
+      }
+
+      enableCardWhatsAppClicks('#bestProducts');
+      enableCardWhatsAppClicks('.latest-products'); // if you reuse card styles elsewhere
+    });
+  </script>
+{% endblock %}
