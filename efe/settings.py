@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "d71a8aa2ef92.ngrok-free.app",
+    "176.74.18.130",
     "deephub.com.ng",
     "www.deephub.com.ng",
 ]
