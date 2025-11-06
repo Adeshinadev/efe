@@ -10,7 +10,6 @@ cryptography
 dj-database-url
 Django
 django-cloudinary-storage
-django-heroku
 django-rest-knox
 djangorestframework
 drf-yasg
@@ -41,4 +40,4 @@ urllib3
 whitenoise
 mailjet-rest
 python-dotenv
-psycopg2-binary
+psycopg2-binary>=2.9
