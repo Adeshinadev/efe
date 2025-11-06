@@ -28,8 +28,16 @@ if not SECRET_KEY:
     raise ValueError("🚨 SECRET_KEY is not set in the environment variables.")
 
 DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
-ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
+# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+# ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "d71a8aa2ef92.ngrok-free.app",
+    "deephub.com.ng",
+    "www.deephub.com.ng",
+]
 
 if DEBUG:
     PAYSTACK_PUBLIC_KEY = os.getenv("TEST_PAYSTACK_PUBLIC_KEY", "")
