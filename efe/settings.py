@@ -64,14 +64,16 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "d71a8aa2ef92.ngrok-free.app",
-    "176.74.18.130",
-    "deephub.com.ng",
-    "www.deephub.com.ng",
-]
+# ALLOWED_HOSTS = [
+#     "localhost",
+#     "127.0.0.1",
+#     "d71a8aa2ef92.ngrok-free.app",
+#     "176.74.18.130",
+#     "deephub.com.ng",
+#     "www.deephub.com.ng",
+# ]
+
+ALLOWED_HOSTS = ['*']
 
 if DEBUG:
     PAYSTACK_PUBLIC_KEY = os.getenv("TEST_PAYSTACK_PUBLIC_KEY", "")
