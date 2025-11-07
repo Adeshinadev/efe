@@ -1,0 +1,5 @@
+PassengerAppRoot /home/deephubc/efe
+PassengerPython /home/deephubc/virtualenv/efe/3.7/bin/python3.7
+PassengerStartupFile passenger_wsgi.py
+PassengerAppEnv production
+PassengerLogFile /home/deephubc/efe/logs/passenger.log
