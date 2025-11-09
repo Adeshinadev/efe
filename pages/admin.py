@@ -114,7 +114,7 @@ class EventAdmin(admin.ModelAdmin):
     )
     list_filter = ("is_published", ("start_at", admin.DateFieldListFilter), ("end_at", admin.DateFieldListFilter))
     search_fields = ("title", "slug", "description")
-    date_hierarchy = "start_at"
+    # date_hierarchy = "start_at"
     readonly_fields = ("created_at", "updated_at", "id", "total_votes_display", "is_live_display")
     prepopulated_fields = {"slug": ("title",)}
     inlines = [CategoryInline]
