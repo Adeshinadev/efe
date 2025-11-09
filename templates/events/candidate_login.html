@@ -18,6 +18,82 @@
   color: #ffcc00;
   box-shadow: 0 6px 15px rgba(255, 204, 0, 0.5);
 }
+
+/* CUSTOM ALERT BOX */
+.custom-alert {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 71, 87, 0.25);
+  color: #fff;
+  padding: 18px 22px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 71, 87, 0.65);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0px 4px 18px rgba(255, 71, 87, 0.35);
+  transform: translateY(-12px);
+  opacity: 0;
+  animation: slideDownAlert 0.35s forwards, fadeInAlert 0.35s forwards;
+}
+
+@keyframes slideDownAlert {
+  from { transform: translateY(-12px); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fadeInAlert {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.custom-alert-icon {
+  font-size: 1.6rem;
+  opacity: 0.9;
+}
+
+.custom-alert-close {
+  margin-left: auto;
+  font-size: 1.4rem;
+  font-weight: 900;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.25s ease-in-out;
+}
+.custom-alert-close:hover {
+  opacity: 1;
+}
+
+/* Success variant */
+.custom-alert[data-type="success"] {
+  border-left-color: #28a745;
+  background: #0f2417;
+  box-shadow: 0 3px 8px rgba(40,167,69,0.2);
+}
+
+/* Warning variant */
+.custom-alert[data-type="warning"] {
+  border-left-color: #ffc107;
+  background: #332701;
+  box-shadow: 0 3px 8px rgba(255,193,7,0.2);
+}
+
+/* Info variant */
+.custom-alert[data-type="info"] {
+  border-left-color: #17a2b8;
+  background: #15282c;
+  box-shadow: 0 3px 8px rgba(23,162,184,0.2);
+}
+
+/* Error variant */
+.custom-alert[data-type="error"],
+.custom-alert[data-type="danger"] {
+  background: rgba(255, 71, 87, 0.35);
+  border-color: rgba(255, 71, 87, 0.95);
+}
 </style>
 
 {% block title %}Candidate Results – {{ event.title }}{% endblock %}
@@ -29,11 +105,15 @@
       <h3 class="mb-20 text-center">Candidate Results – {{ event.title }}</h3>
       <p class="muted mb-20 text-center">Enter the credentials provided by the organizers.</p>
 
-      {% if messages %}
-        {% for m in messages %}
-          <div class="alert alert-{{ m.tags }} mb-20">{{ m }}</div>
-        {% endfor %}
-      {% endif %}
+     {% if messages %}
+  {% for m in messages %}
+    <div class="custom-alert show" data-type="{{ m.tags }}">
+      <span class="custom-alert-icon">⚠</span>
+      <span class="custom-alert-message">{{ m }}</span>
+      <span class="custom-alert-close" onclick="this.parentElement.classList.remove('show')">&times;</span>
+    </div>
+  {% endfor %}
+{% endif %}
 
       <form method="post" novalidate>
         {% csrf_token %}

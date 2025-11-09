@@ -4,7 +4,32 @@
 /* Vote modal styles */
 .vote-modal{background:#171a1f;color:#e8eaf0}
 .vote-modal .modal-body{padding:30px}
-.vote-modal .form-control{background:#0f1217;border:1px solid rgba(255,255,255,.12);color:#e8eaf0}
+.vote-modal .form-control{background:#0f1217;border:1px solid rgba(212,175,55,.45);color:#e8eaf0}
+.vote-modal select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #0f1217;
+  color: #e8eaf0;
+  border: 1px solid rgba(212,175,55,.55);
+  padding: 14px;
+  font-size: 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+.vote-modal select.form-control option {
+  background: #0f1217;
+  color: #e8eaf0;
+  padding: 12px;
+  font-size: 1rem;
+}
+
+/* Ensure dropdown opens above modal elements */
+.vote-modal select {
+  position: relative;
+  z-index: 9999 !important;
+}
 .vote-modal .form-control:focus{border-color:#d4af37;box-shadow:0 0 0 2px rgba(212,175,55,.15)}
 .vote-modal .input-group .btn{background:#0f1217;border:1px solid rgba(255,255,255,.12);color:#e8eaf0}
 .vote-modal label{font-weight:700}
@@ -19,11 +44,25 @@
 .vote-modal .muted{color:#a7adb9}
 .hidden{display:none!important}
 .is-loading{pointer-events:none;opacity:.7}
+
+/* Fix select dropdown clipping and visibility */
+.modal-content {
+  overflow: visible !important;
+}
+
+.vote-modal select.form-control {
+  max-height: 55px;
+}
+
+.vote-modal select.form-control option {
+  height: 50px;
+  padding: 14px;
+}
 </style>
 
 <div class="modal fade" id="voteModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-    <div class="modal-content sigma-card vote-modal" style="border:0;overflow:hidden">
+    <div class="modal-content sigma-card vote-modal" style="border:0;">
       <div class="modal-body p-30">
         <div class="d-flex justify-content-between align-items-center mb-20">
           <h4 class="mb-0">Cast Your Vote</h4>
@@ -54,11 +93,19 @@
           <div id="candidateBlock" class="mt-3 hidden">
             <label class="d-block"><strong>Candidates</strong></label>
             <div id="candidateGrid" class="row"></div>
+
+            <!-- Loading Spinner -->
+            <div id="candidateLoader" class="hidden text-center mt-3">
+              <div class="spinner-border text-warning" role="status" style="width:2.5rem;height:2.5rem;">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <div class="muted mt-2">Loading candidates...</div>
+            </div>
           <div id="candidateEmpty" class="muted hidden" style="padding:8px 2px">No candidates found for this category.</div>
         </div>
 
         <!-- Email (required by Paystack) -->
-        <div class="form-group mt-3">
+        <div class="form-group mt-3 hidden" id="voteEmailBlock">
           <label for="voteEmail"><strong>Email (required for payment)</strong></label>
           <input type="email" id="voteEmail" class="form-control" placeholder="you@example.com" autocomplete="email">
           <small class="text-muted d-block mt-1">We don’t store this here — Paystack needs an email to issue your receipt.</small>
@@ -67,7 +114,7 @@
         <hr class="my-20">
 
           <!-- Votes / Total -->
-          <div class="row">
+          <div class="row hidden" id="voteCountBlock">
             <div class="col-md-6">
               <label for="voteQty"><strong>Number of votes</strong></label>
               <div class="input-group">
@@ -96,7 +143,7 @@
 
           <hr class="my-20">
 
-          <div class="d-flex justify-content-end">
+          <div class="d-flex justify-content-end hidden" id="votePayBlock">
             <button id="payNowBtn" class="btn btn-gold" disabled>
               <span class="btn-text">Pay &amp; Vote</span>
               <span class="btn-spinner hidden" aria-hidden="true">&nbsp;•&nbsp;Processing…</span>
@@ -315,12 +362,20 @@
 
       if (!list || !list.length){
         emptyMsg && emptyMsg.classList.remove('hidden');
+        // Hide email, count, and pay blocks when no candidates
+        document.getElementById("voteEmailBlock").classList.add("hidden");
+        document.getElementById("voteCountBlock").classList.add("hidden");
+        document.getElementById("votePayBlock").classList.add("hidden");
         LOG('renderCandidates: no candidates -> showing empty state');
         recalc();
         return;
       }
 
       emptyMsg && emptyMsg.classList.add('hidden');
+      // Show email, count, and pay blocks when candidates are present
+      document.getElementById("voteEmailBlock").classList.remove("hidden");
+      document.getElementById("voteCountBlock").classList.remove("hidden");
+      document.getElementById("votePayBlock").classList.remove("hidden");
       LOG('renderCandidates: rendering', list.length, 'candidates');
 
       list.forEach(function(c){
@@ -355,32 +410,40 @@
 
     function onCatChange(){
       LOG('onCatChange fired');
-      if (!selCategory) { LOG('onCatChange: no select found'); return; }
+      if (!selCategory) return;
+
       const id = String(selCategory.value || '').trim();
       LOG('category change -> selected value:', id);
-      LOG('available category keys:', Array.from(catIndex.keys()));
 
-      // Direct map lookup first (fast & exact)
-      let cat = catIndex.get(id);
+      // ✅ Show loader and hide grid while loading
+      document.getElementById("candidateLoader").classList.remove("hidden");
+      block.classList.remove("hidden");
+      grid.innerHTML = "";
+      emptyMsg && emptyMsg.classList.add("hidden");
 
-      // Fallback: loose search (if option values differ in type/format)
-      if (!cat) {
-        cat = data.find(x =>
-          x.id === id ||
-          x.id.toLowerCase() === id.toLowerCase()
-        );
-        LOG('fallback matched category:', cat);
-      } else {
-        LOG('matched category via map:', cat);
-      }
+      // Optional small delay to show loader
+      setTimeout(() => {
+        const startTime = Date.now();
+        let cat = catIndex.get(id);
+        if (!cat) {
+          cat = data.find(x => x.id.toLowerCase() === id.toLowerCase());
+        }
 
-      if (!cat) {
-        LOG('ERROR: No category matched for value:', id);
-        renderCandidates([]); // show empty state
-        return;
-      }
+        // Wait minimum 3 seconds BEFORE showing candidates
+        setTimeout(() => {
+          if (!cat) {
+            LOG('No category matched');
+            renderCandidates([]);
+          } else {
+            renderCandidates(cat.candidates);
+          }
 
-      renderCandidates(cat.candidates);
+          // Now hide spinner AFTER candidates have been rendered
+          document.getElementById("candidateLoader").classList.add("hidden");
+
+        }, 3000);  // ⏳ enforce minimum 3 seconds spinner before showing candidates
+
+      }, 0);  // (leave unchanged if already 0, just ensure inner timeout is 3000ms)
     }
     // Global fallback so inline onchange can call into this module
     window.__onVoteCatChange = function(val){
