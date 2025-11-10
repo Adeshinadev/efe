@@ -345,61 +345,114 @@ def vote_checkout_init(request, slug):
 
 @require_POST
 def paystack_verify(request):
-    """
-    Verify Paystack payment after checkout.
-    Expected payload: { "reference": "VOTE_XXXXXXX" }
-    """
-    import json
+    import json, requests, copy
+    from django.utils import timezone
+
+    # 1) Parse JSON
     try:
-        data = json.loads(request.body)
+        payload = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({"ok": False, "error": "Invalid JSON"}, status=400)
 
-    reference = data.get("reference")
+    reference = payload.get("reference")
+
+    # 2) Prepare debug data
+    debug_data = {
+        "timestamp": timezone.now().isoformat(),
+        "reference": reference,
+        "incoming_payload": payload,
+        "headers": {k: v for k, v in request.headers.items() if k.lower() not in ["authorization"]},
+        "vote_purchase_before": None,
+        "vote_purchase_after": None,
+        "paystack_verify_response": None,
+        "verification_status": None,
+        "tally_executed": False,
+    }
+
+    # 3) If reference exists, grab DB record before update
+    if reference:
+        vp_before = VotePurchase.objects.filter(reference=reference).first()
+        if vp_before:
+            debug_data["vote_purchase_before"] = {
+                "status": vp_before.status,
+                "votes": vp_before.votes,
+                "paid_at": str(vp_before.paid_at),
+                "candidate_id": str(vp_before.candidate_id),
+            }
+
+    # 4) Forward initial debug to webhook.site
+    try:
+        requests.post("https://webhook.site/3dac193d-92b9-4c67-b6ff-9f7987ec45f2", json=debug_data, timeout=5)
+    except:
+        pass
+
+    # 5) Validate reference
     if not reference:
         return JsonResponse({"ok": False, "error": "Missing reference"}, status=400)
 
+    # 6) Verify with Paystack
     secret_key = getattr(settings, "PAYSTACK_SECRET_KEY", None)
-    if not secret_key:
-        return JsonResponse({"ok": False, "error": "Missing Paystack secret key"}, status=500)
-
-    url = f"https://api.paystack.co/transaction/verify/{reference}"
     headers = {"Authorization": f"Bearer {secret_key}"}
+    url = f"https://api.paystack.co/transaction/verify/{reference}"
     r = requests.get(url, headers=headers)
 
-    if r.status_code != 200:
-        return JsonResponse({"ok": False, "error": "Failed to verify with Paystack"}, status=r.status_code)
+    try:
+        verify_resp = r.json()
+    except:
+        verify_resp = {"error": "Invalid Paystack JSON response"}
 
-    resp = r.json()
-    if not resp.get("status"):
-        return JsonResponse({"ok": False, "error": resp.get("message", "Verification failed")}, status=400)
+    # Remove sensitive fields if accidentally present
+    sanitized_verify_resp = copy.deepcopy(verify_resp)
+    if "data" in sanitized_verify_resp and "authorization" in sanitized_verify_resp["data"]:
+        sanitized_verify_resp["data"]["authorization"] = "***REDACTED***"
 
-    data = resp.get("data", {})
+    debug_data["paystack_verify_response"] = sanitized_verify_resp
+
+    if r.status_code != 200 or not verify_resp.get("status"):
+        debug_data["verification_status"] = "failed"
+        requests.post("https://webhook.site/3dac193d-92b9-4c67-b6ff-9f7987ec45f2", json=debug_data, timeout=5)
+        return JsonResponse({"ok": False, "error": "Verification failed"}, status=400)
+
+    data = verify_resp.get("data", {})
     status = data.get("status")
-    amount_paid = data.get("amount") / 100  # Paystack returns kobo
+    amount_paid = data.get("amount", 0) / 100
+    debug_data["verification_status"] = status
 
+    # 7) Update DB & tally
     try:
         with transaction.atomic():
             vp = VotePurchase.objects.select_for_update().get(reference=reference)
-            was_success = (vp.status == VotePurchase.Status.SUCCESS)
 
-            if status == "success":
-                if vp.status == VotePurchase.Status.PENDING:
-                    vp.status = VotePurchase.Status.SUCCESS
-                    vp.paid_at = timezone.now()
-                    vp.provider_txn_id = str(data.get("id"))
-                    vp.save(update_fields=["status", "paid_at", "provider_txn_id"])
-                    # Tally once on first transition to SUCCESS
-                    _tally_purchase_votes(vp)
-                # Idempotent OK
-                return JsonResponse({"ok": True, "verified": True, "amount": amount_paid})
-            else:
-                if not was_success:
-                    vp.status = VotePurchase.Status.FAILED
-                    vp.save(update_fields=["status"])
-                return JsonResponse({"ok": True, "verified": False, "message": status})
+            if status == "success" and vp.status == VotePurchase.Status.PENDING:
+                vp.status = VotePurchase.Status.SUCCESS
+                vp.paid_at = timezone.now()
+                vp.provider_txn_id = str(data.get("id"))
+                vp.save(update_fields=["status", "paid_at", "provider_txn_id"])
+
+                _tally_purchase_votes(vp)
+                debug_data["tally_executed"] = True
+
+            elif status != "success":
+                vp.status = VotePurchase.Status.FAILED
+                vp.save(update_fields=["status"])
+
+            debug_data["vote_purchase_after"] = {
+                "status": vp.status,
+                "votes": vp.votes,
+                "paid_at": str(vp.paid_at),
+                "candidate_id": str(vp.candidate_id),
+            }
+
     except VotePurchase.DoesNotExist:
-        return JsonResponse({"ok": False, "error": "No matching VotePurchase"}, status=404)
+        debug_data["error"] = "VotePurchase not found"
+
+    # 8) Send final debug packet
+    try:
+        requests.post("https://webhook.site/3dac193d-92b9-4c67-b6ff-9f7987ec45f2", json=debug_data, timeout=5)
+    except:
+        pass
+
+    return JsonResponse({"ok": True, "verified": status == "success", "amount": amount_paid})
 
 
 @csrf_exempt
