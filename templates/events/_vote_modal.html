@@ -65,7 +65,7 @@
     <div class="modal-content sigma-card vote-modal" style="border:0;">
       <div class="modal-body p-30">
         <div class="d-flex justify-content-between align-items-center mb-20">
-          <h4 class="mb-0">Cast Your Vote</h4>
+          <h4 class="mb-0">Vote for Your Favorite</h4>
           <a href="#" class="remove" data-dismiss="modal"><i class="fal fa-times"></i></a>
         </div>
 
@@ -88,10 +88,16 @@
               {% endfor %}
             </select>
           </div>
-
+<br><br>
           <!-- Candidates -->
           <div id="candidateBlock" class="mt-3 hidden">
-            <label class="d-block"><strong>Candidates</strong></label>
+            <label class="d-block"><strong>Candidates</strong>
+
+             <small class="text-muted d-block" style="font-size:13px;font-weight:400;">
+      Select the brand you'd like to vote for
+    </small>
+
+            </label>
             <div id="candidateGrid" class="row"></div>
 
             <!-- Loading Spinner -->
@@ -193,7 +199,7 @@
 
 <script>
 (function(){
-  const LOG = (...args)=>console.log('[VOTE]', ...args);
+  const LOG = () => {};
 
   function showSuccessModal({candidateName, votes, reference}){
     const m = document.getElementById('voteSuccessModal');
@@ -519,7 +525,6 @@
 
           if (!res.ok){
             const t = await res.text();
-            console.error('Create VotePurchase failed', res.status, t);
             alert('Could not start checkout. Please try again.');
             return;
           }
@@ -556,7 +561,6 @@
                 alert('We received your payment but could not verify automatically. Please contact support with ref: ' + reference);
               }
             } catch(err){
-              console.error('Verify error', err);
               alert('Payment completed, verification pending. Ref: ' + reference);
             }
           }
@@ -590,7 +594,6 @@
           const handler = PaystackPop.setup(psConfig);
           handler.openIframe();
         } catch (err){
-          console.error('Network/JS error:', err);
           alert('Network error. Please try again.');
         } finally {
           // Note: on successful payment the page reloads in callback; otherwise restore button here
@@ -615,25 +618,21 @@
 
   // Initialize on DOM ready (covers first page load)
   document.addEventListener('DOMContentLoaded', initVoteModal);
-  console.log('[VOTE] DOMContentLoaded listener attached');
 
   // Re-init every time the modal is shown (covers re-open after navigating)
   const voteModalEl = document.getElementById('voteModal');
   if (voteModalEl) {
     // Bootstrap 5 event
     voteModalEl.addEventListener('shown.bs.modal', initVoteModal);
-    console.log('[VOTE] Bootstrap native shown.bs.modal listener attached');
     // Bootstrap 4 fallback via jQuery (if jQuery is present)
     if (window.jQuery) {
       jQuery(voteModalEl).on('shown.bs.modal', initVoteModal);
-      console.log('[VOTE] jQuery shown.bs.modal listener attached');
     }
   }
 
   // Safety: also init after clicking any trigger (covers cases where partial loads late)
   document.querySelectorAll('[data-target="#voteModal"], [data-bs-target="#voteModal"]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      console.log('[VOTE] trigger click -> scheduling initVoteModal');
       setTimeout(initVoteModal, 0);
     });
   });

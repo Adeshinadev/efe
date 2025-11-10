@@ -384,7 +384,7 @@ def paystack_verify(request):
             was_success = (vp.status == VotePurchase.Status.SUCCESS)
 
             if status == "success":
-                if not was_success:
+                if vp.status == VotePurchase.Status.PENDING:
                     vp.status = VotePurchase.Status.SUCCESS
                     vp.paid_at = timezone.now()
                     vp.provider_txn_id = str(data.get("id"))
