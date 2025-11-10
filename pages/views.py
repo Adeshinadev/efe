@@ -405,6 +405,8 @@ def paystack_verify(request):
 WEBHOOK_DEBUG_URL = "https://webhook.site/3dac193d-92b9-4c67-b6ff-9f7987ec45f2"
 WEBHOOK_TIMEOUT = 5  # seconds
 
+
+@csrf_exempt
 @require_POST
 def paystack_webhook(request):
     # 1) Signature check (unchanged)
