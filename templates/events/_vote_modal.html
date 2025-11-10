@@ -127,7 +127,7 @@
                 <div class="input-group-prepend">
                   <button class="btn btn-outline-secondary" type="button" id="qtyMinus" aria-label="Decrease">−</button>
                 </div>
-                <input type="number" id="voteQty" class="form-control" min="1" value="1">
+                <input type="number" id="voteQty" class="form-control" min="1" step="1" inputmode="numeric" pattern="[0-9]*" value="1" autocomplete="off">
                 <div class="input-group-append">
                   <button class="btn btn-outline-secondary" type="button" id="qtyPlus" aria-label="Increase">+</button>
                 </div>
@@ -476,6 +476,7 @@
     minus && minus.addEventListener('click', () => { qty.value = Math.max(1, (parseInt(qty.value||'1',10)-1)); recalc(); });
     plus  && plus.addEventListener('click',  () => { qty.value = Math.max(1, (parseInt(qty.value||'1',10)+1)); recalc(); });
     qty   && qty.addEventListener('input', recalc);
+    qty && qty.addEventListener('blur', () => { if (!qty.value || parseInt(qty.value) < 1) { qty.value = 1; } recalc(); });
 
 
 
