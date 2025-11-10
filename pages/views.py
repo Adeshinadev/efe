@@ -408,73 +408,53 @@ WEBHOOK_TIMEOUT = 5  # seconds
 
 @csrf_exempt
 @require_POST
+@csrf_exempt
+@require_POST
 def paystack_webhook(request):
     tally_executed = False  # ✅ prevent undefined errors later
 
     # 1) Signature check
     signature = request.headers.get("x-paystack-signature") or request.META.get("HTTP_X_PAYSTACK_SIGNATURE")
+    requests.post(WEBHOOK_DEBUG_URL, json={"stage": "signature_received", "signature": signature})
+
     if not signature:
         return HttpResponse("Missing signature", status=401)
 
     secret = settings.PAYSTACK_SECRET_KEY
     raw = request.body
     computed = hmac.new(secret.encode(), raw, hashlib.sha512).hexdigest()
+
     if not hmac.compare_digest(computed, signature):
+        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "signature_invalid", "computed": computed})
         return HttpResponse("Invalid signature", status=401)
 
-    # 2) Parse JSON safely
+    requests.post(WEBHOOK_DEBUG_URL, json={"stage": "signature_validated"})
+
+    # 2) Parse JSON
     try:
         payload = json.loads(raw.decode("utf-8"))
-    except Exception:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={
-                "stage": "bad_json",
-                "raw": raw.decode("utf-8", errors="replace")[:4000],
-                "headers": {k: v for k, v in request.headers.items() if k.lower() not in ["authorization", "cookie"]},
-                "timestamp": timezone.now().isoformat()
-            }, timeout=WEBHOOK_TIMEOUT)
-        except:
-            pass
+    except Exception as e:
+        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "bad_json", "error": str(e)})
         return HttpResponse("Bad JSON", status=400)
 
-    # 3) Debug: log received payload
-    try:
-        requests.post(WEBHOOK_DEBUG_URL, json={
-            "stage": "received",
-            "event": payload.get("event"),
-            "incoming_payload": payload,
-            "headers": {k: v for k, v in request.headers.items() if k.lower() not in ["authorization", "cookie"]},
-            "timestamp": timezone.now().isoformat()
-        }, timeout=WEBHOOK_TIMEOUT)
-    except:
-        pass
+    # 3) Log Payload
+    requests.post(WEBHOOK_DEBUG_URL, json={"stage": "received", "event": payload.get("event")})
 
-    # 4) Only allow charge.success
+    # 4) Check Event Type
     if payload.get("event") != "charge.success":
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={
-                "stage": "ignored_event",
-                "event": payload.get("event"),
-                "timestamp": timezone.now().isoformat()
-            }, timeout=WEBHOOK_TIMEOUT)
-        except:
-            pass
+        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "event_checked", "valid": False})
         return JsonResponse({"ok": True, "ignored": payload.get("event")})
+
+    requests.post(WEBHOOK_DEBUG_URL, json={"stage": "event_checked", "valid": True})
 
     data = payload.get("data") or {}
     reference = data.get("reference")
+
     if not reference:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={
-                "stage": "missing_reference",
-                "incoming_payload": payload,
-                "timestamp": timezone.now().isoformat()
-            }, timeout=WEBHOOK_TIMEOUT)
-        except:
-            pass
+        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "missing_reference"})
         return HttpResponse("No reference", status=400)
 
-    # 5) DB lookup + update (must be inside transaction for select_for_update)
+    # 5) DB Lookup + Transaction
     try:
         with transaction.atomic():
             purchase = VotePurchase.objects.select_for_update().get(reference=reference)
@@ -486,70 +466,66 @@ def paystack_webhook(request):
                 "currency": purchase.currency,
                 "votes": getattr(purchase, "votes", None),
                 "candidate_id": str(getattr(purchase, "candidate_id", None)),
-                "paid_at": str(purchase.paid_at) if purchase.paid_at else None,
             }
 
-            # 6) Idempotency: already successful
+            requests.post(WEBHOOK_DEBUG_URL, json={"stage": "db_lookup_before", "before": before})
+
+            # 6) Idempotency check
+            requests.post(WEBHOOK_DEBUG_URL, json={"stage": "status_check", "status": purchase.status})
+
             if purchase.status == VotePurchase.Status.SUCCESS:
-                try:
-                    requests.post(WEBHOOK_DEBUG_URL, json={
-                        "stage": "idempotent_already_success",
-                        "reference": reference,
-                        "before": before,
-                        "timestamp": timezone.now().isoformat()
-                    }, timeout=WEBHOOK_TIMEOUT)
-                except:
-                    pass
                 return JsonResponse({"ok": True, "idempotent": True})
 
-            # 7) Validate amount & currency
+            # 7) Amount check
             try:
                 ps_amount_kobo = int(data.get("amount") or 0)
             except:
                 ps_amount_kobo = 0
 
-            ps_currency = (data.get("currency") or "").upper()
             expected_kobo = int(Decimal(purchase.amount) * 100)
 
+            requests.post(WEBHOOK_DEBUG_URL, json={
+                "stage": "amount_check",
+                "ps_amount_kobo": ps_amount_kobo,
+                "expected_kobo": expected_kobo
+            })
+
             if ps_amount_kobo != expected_kobo:
-                try:
-                    requests.post(WEBHOOK_DEBUG_URL, json={
-                        "stage": "amount_mismatch",
-                        "reference": reference,
-                        "ps_amount_kobo": ps_amount_kobo,
-                        "expected_kobo": expected_kobo,
-                        "incoming_payload": payload,
-                        "before": before,
-                        "timestamp": timezone.now().isoformat()
-                    }, timeout=WEBHOOK_TIMEOUT)
-                except:
-                    pass
                 return HttpResponse("Amount mismatch", status=400)
 
+            # 8) Currency check
+            ps_currency = (data.get("currency") or "").upper()
+            requests.post(WEBHOOK_DEBUG_URL, json={
+                "stage": "currency_check",
+                "ps_currency": ps_currency,
+                "db_currency": purchase.currency.upper()
+            })
+
             if purchase.currency.upper() != ps_currency:
-                try:
-                    requests.post(WEBHOOK_DEBUG_URL, json={
-                        "stage": "currency_mismatch",
-                        "reference": reference,
-                        "ps_currency": ps_currency,
-                        "expected_currency": purchase.currency,
-                        "incoming_payload": payload,
-                        "before": before,
-                        "timestamp": timezone.now().isoformat()
-                    }, timeout=WEBHOOK_TIMEOUT)
-                except:
-                    pass
                 return HttpResponse("Currency mismatch", status=400)
 
-            # 8) Mark success
+            # 9) Mark success
             purchase.status = VotePurchase.Status.SUCCESS
             purchase.paid_at = timezone.now()
             purchase.provider_txn_id = str(data.get("id") or "")
             purchase.save(update_fields=["status", "paid_at", "provider_txn_id"])
 
-            # 9) Tally votes
+            # 10) Before tally log
+            requests.post(WEBHOOK_DEBUG_URL, json={
+                "stage": "tally_about_to_execute",
+                "reference": reference
+            })
+
+            # 11) Execute tally
             _tally_purchase_votes(purchase)
             tally_executed = True
+
+            # 12) After tally log
+            requests.post(WEBHOOK_DEBUG_URL, json={
+                "stage": "tally_finished",
+                "reference": reference,
+                "tally_executed": True
+            })
 
             after = {
                 "reference": purchase.reference,
@@ -558,46 +534,24 @@ def paystack_webhook(request):
                 "currency": purchase.currency,
                 "votes": getattr(purchase, "votes", None),
                 "candidate_id": str(getattr(purchase, "candidate_id", None)),
-                "paid_at": str(purchase.paid_at) if purchase.paid_at else None,
             }
 
     except VotePurchase.DoesNotExist:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={
-                "stage": "purchase_missing",
-                "reference": reference,
-                "incoming_payload": payload,
-                "timestamp": timezone.now().isoformat()
-            }, timeout=WEBHOOK_TIMEOUT)
-        except:
-            pass
+        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "purchase_missing"})
         return JsonResponse({"ok": True, "missing": True})
 
     except Exception as exc:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={
-                "stage": "processing_error",
-                "reference": reference,
-                "error": str(exc),
-                "timestamp": timezone.now().isoformat()
-            }, timeout=WEBHOOK_TIMEOUT)
-        except:
-            pass
+        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "processing_error", "error": str(exc)})
         return HttpResponse("Internal error", status=500)
 
-    # 10) Final success debug log
-    try:
-        requests.post(WEBHOOK_DEBUG_URL, json={
-            "stage": "processed",
-            "reference": reference,
-            "before": before,
-            "after": after,
-            "tally_executed": bool(tally_executed),
-            "incoming_payload": payload,
-            "timestamp": timezone.now().isoformat()
-        }, timeout=WEBHOOK_TIMEOUT)
-    except:
-        pass
+    # ✅ Final success
+    requests.post(WEBHOOK_DEBUG_URL, json={
+        "stage": "processed",
+        "reference": reference,
+        "before": before,
+        "after": after,
+        "tally_executed": tally_executed
+    })
 
     return JsonResponse({"ok": True, "verified": True, "reference": reference})
 
