@@ -409,208 +409,76 @@ WEBHOOK_TIMEOUT = 5  # seconds
 @csrf_exempt
 @require_POST
 def paystack_webhook(request):
-    tally_executed = False
 
-    # Helper to make debug payload JSON safe
-    def make_json_safe(obj):
-        if isinstance(obj, dict):
-            return {k: make_json_safe(v) for k, v in obj.items()}
-        if isinstance(obj, (list, tuple)):
-            return [make_json_safe(v) for v in obj]
-        return str(obj) if not isinstance(obj, (str, int, float, bool, type(None))) else obj
-
-    # 1) Signature check
+    # 1) Verify Signature
     signature = request.headers.get("x-paystack-signature") or request.META.get("HTTP_X_PAYSTACK_SIGNATURE")
-    try:
-        requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({"stage": "signature_received", "signature": signature}))
-    except:
-        pass
-
     if not signature:
         return HttpResponse("Missing signature", status=401)
 
     secret = settings.PAYSTACK_SECRET_KEY
-    raw = request.body
-    computed = hmac.new(secret.encode(), raw, hashlib.sha512).hexdigest()
+    raw_body = request.body
+    computed = hmac.new(secret.encode(), raw_body, hashlib.sha512).hexdigest()
 
     if not hmac.compare_digest(computed, signature):
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({"stage": "signature_invalid", "computed": computed}))
-        except:
-            pass
         return HttpResponse("Invalid signature", status=401)
 
+    # 2) Parse JSON body
     try:
-        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "signature_validated"})
-    except:
-        pass
+        payload = json.loads(raw_body.decode("utf-8"))
+    except Exception:
+        return HttpResponse("Invalid JSON", status=400)
 
-    # 2) Parse JSON
-    try:
-        payload = json.loads(raw.decode("utf-8"))
-    except Exception as e:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({"stage": "bad_json", "error": str(e)}))
-        except:
-            pass
-        return HttpResponse("Bad JSON", status=400)
-
-    # 3) Log payload
-    try:
-        requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({"stage": "received", "event": payload.get("event")}))
-    except:
-        pass
-
-    # 4) Check event type
+    # 3) Only handle successful charge events
     if payload.get("event") != "charge.success":
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={"stage": "event_checked", "valid": False})
-        except:
-            pass
-        return JsonResponse({"ok": True, "ignored": payload.get("event")})
-
-    try:
-        requests.post(WEBHOOK_DEBUG_URL, json={"stage": "event_checked", "valid": True})
-    except:
-        pass
+        return JsonResponse({"ok": True, "ignored_event": payload.get("event")})
 
     data = payload.get("data") or {}
     reference = data.get("reference")
-
     if not reference:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={"stage": "missing_reference"})
-        except:
-            pass
-        return HttpResponse("No reference", status=400)
+        return HttpResponse("Missing reference", status=400)
 
-    # 5) DB lookup + transaction
+    # 4) Process in atomic DB transaction
     try:
         with transaction.atomic():
             purchase = VotePurchase.objects.select_for_update().get(reference=reference)
 
-            before = {
-                "reference": purchase.reference,
-                "status": purchase.status,
-                "amount": str(purchase.amount),
-                "currency": purchase.currency,
-                "votes": list(purchase.votes.values("candidate", "quantity")),
-                "paid_at": str(purchase.paid_at)
-            }
-
-            try:
-                requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({"stage": "db_lookup_before", "before": before}))
-            except:
-                pass
-
-            try:
-                requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({"stage": "status_check", "status": str(purchase.status)}))
-            except:
-                pass
-
+            # Idempotency: if already successful, exit early
             if purchase.status == VotePurchase.Status.SUCCESS:
                 return JsonResponse({"ok": True, "idempotent": True})
 
-            # 6) Amount check
+            # 5) Validate amount (Paystack uses kobo)
             try:
-                ps_amount_kobo = int(data.get("amount") or 0)
+                paystack_amount_kobo = int(data.get("amount") or 0)
             except:
-                ps_amount_kobo = 0
+                return HttpResponse("Invalid amount", status=400)
 
             expected_kobo = int(Decimal(purchase.amount) * 100)
-
-            try:
-                requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({
-                    "stage": "amount_check",
-                    "ps_amount_kobo": ps_amount_kobo,
-                    "expected_kobo": expected_kobo
-                }))
-            except:
-                pass
-
-            if ps_amount_kobo != expected_kobo:
+            if paystack_amount_kobo != expected_kobo:
                 return HttpResponse("Amount mismatch", status=400)
 
-            # 7) Currency check
-            ps_currency = (data.get("currency") or "").upper()
-
-            try:
-                requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({
-                    "stage": "currency_check",
-                    "ps_currency": ps_currency,
-                    "db_currency": purchase.currency.upper()
-                }))
-            except:
-                pass
-
-            if purchase.currency.upper() != ps_currency:
+            # 6) Validate currency
+            paystack_currency = (data.get("currency") or "").upper()
+            if paystack_currency != purchase.currency.upper():
                 return HttpResponse("Currency mismatch", status=400)
 
-            # 8) Mark success
+            # 7) Mark purchase as successful
             purchase.status = VotePurchase.Status.SUCCESS
             purchase.paid_at = timezone.now()
             purchase.provider_txn_id = str(data.get("id") or "")
             purchase.save(update_fields=["status", "paid_at", "provider_txn_id"])
 
-            try:
-                requests.post(WEBHOOK_DEBUG_URL, json={"stage": "tally_about_to_execute", "reference": reference})
-            except:
-                pass
-
-            # 9) Execute tally safely
+            # 8) Tally votes
             try:
                 _tally_purchase_votes(purchase)
-                tally_executed = True
-            except Exception as tally_error:
-                try:
-                    requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({
-                        "stage": "tally_failed",
-                        "error": str(tally_error),
-                        "reference": reference
-                    }))
-                except:
-                    pass
-                return HttpResponse("Tally failed", status=500)
-
-            try:
-                requests.post(WEBHOOK_DEBUG_URL, json={"stage": "tally_finished", "reference": reference})
-            except:
-                pass
-
-            after = {
-                "reference": purchase.reference,
-                "status": purchase.status,
-                "amount": str(purchase.amount),
-                "currency": purchase.currency,
-                "paid_at": str(purchase.paid_at),
-                "votes": list(purchase.votes.values("candidate", "quantity"))
-            }
+            except Exception as e:
+                return HttpResponse("Tally processing failed", status=500)
 
     except VotePurchase.DoesNotExist:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json={"stage": "purchase_missing"})
-        except:
-            pass
-        return JsonResponse({"ok": True, "missing": True})
+        # Do not treat as failure (Paystack may retry)
+        return JsonResponse({"ok": True, "purchase_not_found": True})
 
-    except Exception as exc:
-        try:
-            requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({"stage": "processing_error", "error": str(exc)}))
-        except:
-            pass
-        return HttpResponse("Internal error", status=500)
-
-    # ✅ Final success log
-    try:
-        requests.post(WEBHOOK_DEBUG_URL, json=make_json_safe({
-            "stage": "processed",
-            "reference": reference,
-            "before": before,
-            "after": after,
-            "tally_executed": tally_executed
-        }))
-    except:
-        pass
+    except Exception:
+        return HttpResponse("Internal server error", status=500)
 
     return JsonResponse({"ok": True, "verified": True, "reference": reference})
 
