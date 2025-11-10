@@ -82,7 +82,7 @@ def gallery(request):
 def coming_soon(request):
     return render(request, 'coming-soon.html')
 
-def efe_portal(request):
+def swfw_portal(request):
     config = SiteConfig.get_solo()
     vote_link = config.vote_url if config.vote_url else None
     return render(request, "vote.html", {"vote_link": vote_link})
