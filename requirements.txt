@@ -41,3 +41,4 @@ whitenoise
 mailjet-rest
 python-dotenv
 psycopg2-binary>=2.9
+pymysql
