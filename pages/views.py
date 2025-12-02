@@ -9,6 +9,7 @@ import requests
 import json
 import uuid
 import hashlib
+from django.contrib.auth.decorators import login_required, user_passes_test
 from decimal import Decimal, InvalidOperation
 import hmac
 from django.conf import settings
@@ -19,6 +20,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+
 todays_date = date.today()
 
 def _tally_purchase_votes(purchase: VotePurchase):
@@ -91,8 +93,10 @@ def dashboard(request):
     if request.user.is_authenticated and request.user.is_staff:
         nomination_status=Nomination_visiblility.objects.all().first()
         election_status=Vote_visiblility.objects.all().first()
+        events=Event.objects.all()
         categories=Category.objects.all()
-        return render(request, 'dahsboard2.html',{'nomination_status':nomination_status,'election_status':election_status,'categories':categories})
+        print(events,'ddd')
+        return render(request, 'dashboard/index.html',{'nomination_status':nomination_status,'election_status':election_status,'categories':categories, 'events':events})
     else:
         return redirect('login')
 
@@ -567,3 +571,48 @@ def candidate_logout(request, event_slug):
     messages.success(request, "You’ve been signed out.")
     return redirect("candidate_login", event_slug=event_slug)
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def select_event(request):
+    if request.method == "POST":
+        event_id = request.POST.get("category_id")
+        return redirect("select_category", event_id=event_id)
+
+    return redirect("/")
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def select_category(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    categories = Category.objects.filter(event=event)
+
+    return render(request, "dashboard/select_category.html", {
+        "event": event,
+        "categories": categories
+    })
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def ajax_get_category_results(request):
+    category_id = request.GET.get("category_id")
+
+    category = get_object_or_404(Category, id=category_id)
+    candidates = category.candidates.all()
+
+    total_votes = sum(c.vote_count for c in candidates)
+
+    results = []
+    for c in candidates:
+        pct = (c.vote_count / total_votes * 100) if total_votes > 0 else 0
+        results.append({
+            "name": c.name,
+            "votes": c.vote_count,
+            "percentage": round(pct, 2)
+        })
+
+    return JsonResponse({
+        "category": category.name,
+        "total_votes": total_votes,
+        "results": results
+    })

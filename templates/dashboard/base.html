@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}EFE - Dashboard{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'dash/modal/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dash/modal/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'dash/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+
+    <!-- Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="dashboard">
+
+    <!-- =================== Modals (global) =================== -->
+
+    <!-- Check Vote Result Modal -->
+    <div class="modal fade" id="CheckResul" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+<form action="{% url 'select_event' %}" method="post" class="identity-upload">                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Check Vote Result</h5>
+                        <button type="button" class="btn-close" data-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category_id">
+                            {% for event in events %}
+                            <option value="{{ event.id }}">{{ event.title}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- =================== Layout Wrapper =================== -->
+    <div id="main-wrapper">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xxl-12">
+                        <div class="header-content">
+                            <div class="header-left">
+                                <div class="brand-logo">
+                                    <a class="mini-logo" href="#"><img src="images/logoi.png" width="40"></a>
+                                </div>
+
+                                <div class="search">
+                                    <form>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Search Here">
+                                            <span class="input-group-text"><i class="ri-search-line"></i></span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="header-right">
+                                <div class="dark-light-toggle">
+                                    <span class="dark"><i class="ri-moon-line"></i></span>
+                                    <span class="light"><i class="ri-sun-line"></i></span>
+                                </div>
+
+                                <div class="nav-item dropdown notification dropdown">
+                                    <div data-toggle="dropdown">
+                                        <div class="notify-bell icon-menu">
+                                            <span><i class="ri-notification-2-line"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown profile_log dropdown">
+                                    <div data-toggle="dropdown">
+                                        <div class="user icon-menu active">
+                                            <span><i class="ri-user-line"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <div class="user-email">
+                                            <div class="user">
+                                                <span class="thumb"><img src="images/profile/3.png"></span>
+                                                <div class="user-info">
+                                                    <h5>{{ request.user.first_name }} {{ request.user.last_name }}</h5>
+                                                    <span>{{ request.user.email }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <a class="dropdown-item logout" href="signin.html">
+                                            <i class="ri-logout-circle-line"></i>Logout
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="brand-logo"><a class="full-logo" href="#"><img src="images/logoi.png" width="30"></a></div>
+            <div class="menu">
+                <ul>
+                    <li><a href=""><i class="ri-home-5-line"></i><span class="nav-text">Dashboard</span></a></li>
+                    <li><a href=""><i class="ri-secure-payment-line"></i><span class="nav-text">Transactions</span></a></li>
+                    <li><a href=""><i class="ri-settings-3-line"></i><span class="nav-text">Settings</span></a></li>
+                    <li class="logout"><a href=""><i class="ri-logout-circle-line"></i><span class="nav-text">Signout</span></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- =================== Content Block =================== -->
+        <div class="content-body">
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+
+    <!-- =================== Scripts =================== -->
+    <script src="{% static 'dash/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'dash/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script src="{% static 'dash/modal/js/jquery.min.js' %}"></script>
+    <script src="{% static 'dash/modal/js/popper.js' %}"></script>
+    <script src="{% static 'dash/modal/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'dash/modal/js/main.js' %}"></script>
+
+    <script src="{% static 'dash/js/scripts.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

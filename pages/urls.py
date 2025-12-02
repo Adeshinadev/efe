@@ -33,6 +33,8 @@ urlpatterns = [
     path("events/<slug:event_slug>/candidate/login/", views.candidate_login, name="candidate_login"),
     path("events/<slug:event_slug>/candidate/results/", views.candidate_results, name="candidate_results"),
     path("events/<slug:event_slug>/candidate/logout/", views.candidate_logout, name="candidate_logout"),
-
+    path("results/select-event/", views.select_event, name="select_event"),
+    path("results/<uuid:event_id>/select/", views.select_category, name="select_category"),
+    path("results/ajax/get-category-results/", views.ajax_get_category_results, name="ajax_get_category_results"),
 
 ]

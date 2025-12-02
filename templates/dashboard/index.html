@@ -1,0 +1,155 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Dashboard - EFE{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="page-title">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-xl-4">
+                <div class="page-title-content">
+                    <h3>Dashboard</h3>
+                    <p class="mb-2">Welcome EFE dashboard</p>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="breadcrumbs">
+                    <a href="#">Dashboard</a>
+                    <span><i class="ri-arrow-right-s-line"></i></span>
+                    <a href="#">Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- Balance Details -->
+        <div class="col-xxl-6 col-xl-6 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Balance Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="total-balance">
+                                <p>Total Balance</p>
+                                <h2>NGN221,478</h2>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                            <div class="balance-stats active">
+                                <p>Total Number of votes</p>
+                                <h3>42,678</h3>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                            <div class="balance-stats">
+                                <p>Total number of candidates</p>
+                                <h3>50</h3>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                            <div class="balance-stats">
+                                <p>Total number of votes today</p>
+                                <h3>255</h3>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6">
+                            <div class="balance-stats">
+                                <p>Balance today</p>
+                                <h3>NGN40,000</h3>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Election Manager -->
+        <div class="col-xxl-6 col-xl-6 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Election Manager</h4>
+                </div>
+
+                <div class="card-body">
+
+                    {% for message in messages %}
+                    <div class="alert alert-primary">{{ message }}</div>
+                    {% endfor %}
+
+                    <div class="bills-widget">
+
+                        <!-- Nomination -->
+                        <div class="bills-widget-content d-flex justify-content-between align-items-center active">
+                            <div>
+                                <h4>Nomination</h4>
+                                {% if nomination_status.visibility %}
+                                <p>Click on end button to hide nomination page</p>
+                                {% else %}
+                                <p>Click on start button to display nomination page</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                {% if nomination_status.visibility %}
+                                <a href="{% url 'modify_nomination_status' id=0 %}" class="btn btn-primary">End</a>
+                                {% else %}
+                                <a href="{% url 'modify_nomination_status' id=1 %}" class="btn btn-primary">Start</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Election -->
+                        <div class="bills-widget-content d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4>Election</h4>
+                                {% if election_status.visibility %}
+                                <p>Click on end button to hide voting pages.</p>
+                                {% else %}
+                                <p>Click on start button to display voting pages.</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                {% if election_status.visibility %}
+                                <a href="{% url 'election_status' id=0 %}" class="btn btn-primary">End</a>
+                                {% else %}
+                                <a href="{% url 'election_status' id=1 %}" class="btn btn-primary">Start</a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Results -->
+                        <div class="bills-widget-content d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4>Results</h4>
+                                <p>Click view button to query both Nomination and Election Results</p>
+                            </div>
+                            <button class="btn btn-primary m-2" data-toggle="modal" data-target="#CheckResul">
+                                View
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}

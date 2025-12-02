@@ -1,0 +1,259 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+
+<style>
+.empty-state-box {
+    border: 2px dashed #ced4da;
+    border-radius: 10px;
+    padding: 30px 15px;
+    text-align: center;
+    background: #f8f9fa;
+}
+
+.empty-icon {
+    font-size: 60px;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.empty-text {
+    font-size: 15px;
+    color: #6c757d;
+}
+
+#chartContainer {
+    padding: 15px;
+    border: 1px solid #dce1e7;
+    border-radius: 12px;
+    background: white;
+    margin-top: 12px;
+}
+
+#resultsChart {
+    height: 300px !important;
+    max-height: 300px !important;
+    min-height: 300px !important;
+}
+
+#downloadPdfBtn {
+    margin-top: 18px;
+    margin-bottom: 24px;
+}
+
+/* Candidate list */
+.candidate-list {
+    margin-top: 18px;
+}
+
+.candidate-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+}
+
+.candidate-color {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    margin-right: 12px;
+}
+
+/* verification */
+.verification-badge {
+    margin-top: 20px;
+    padding: 10px 14px;
+    background: #f7f7f9;
+    border: 1px solid #dfe1e5;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 13px;
+    color: #444;
+}
+
+.verification-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.verification-sub {
+    font-size: 11px;
+    color: #555;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<div class="container mt-3">
+
+    <h3>View Results — {{ event.title }}</h3>
+
+    <label class="form-label mt-2">Select Category</label>
+    <select id="categorySelect" class="form-select">
+        <option value="">-- Choose Category --</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}">{{ cat.name }}</option>
+        {% endfor %}
+    </select>
+
+    <hr class="my-2">
+    <h4>Results</h4>
+
+    <div id="resultsArea" class="empty-state-box">
+        <i class="ri-bar-chart-horizontal-line empty-icon"></i>
+        <p class="empty-text">Select a category to load results.</p>
+    </div>
+
+    <button id="downloadPdfBtn" class="btn btn-dark" style="display:none;">Download PDF Snapshot</button>
+
+</div>
+
+<script>
+let currentChart = null;
+
+const glowPlugin = {
+    id: 'glowPlugin',
+    afterDatasetDraw(chart, args, pluginOptions) {
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+
+        meta.data.forEach((slice, i) => {
+            if (i === pluginOptions.winnerIndex) {
+                ctx.save();
+                ctx.shadowColor = 'rgba(241,185,11,0.9)';
+                ctx.shadowBlur = 25;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+                slice.draw(ctx);
+                ctx.restore();
+            }
+        });
+    }
+};
+
+document.getElementById("categorySelect").addEventListener("change", () => {
+    const categoryId = categorySelect.value;
+    const resultsArea = document.getElementById("resultsArea");
+    const downloadBtn = document.getElementById("downloadPdfBtn");
+
+    resultsArea.innerHTML = `
+        <div class="text-center">
+            <i class="ri-loader-4-line empty-icon" style="animation: spin 1s linear infinite;"></i>
+            <p class="empty-text">Loading results...</p>
+        </div>
+    `;
+    downloadBtn.style.display = "none";
+
+    fetch(`/results/ajax/get-category-results/?category_id=${categoryId}`)
+        .then(res => res.json())
+        .then(data => {
+
+            let labels = data.results.map(x => x.name);
+            let votes = data.results.map(x => x.votes);
+
+            const maxVotes = Math.max(...votes);
+            const winnerIndex = votes.indexOf(maxVotes);
+
+            labels = labels.map((label, i) => i === winnerIndex ? "👑 " + label : label);
+
+            const dynamicColors = votes.map((v, i) => {
+                const hue = (i * 360 / votes.length);
+                return `hsl(${hue}, 70%, 55%)`;
+            });
+
+            dynamicColors[winnerIndex] = "#f1b90b";
+
+            resultsArea.innerHTML = `
+                <div id="chartContainer">
+                    <h5 class="text-center" style="font-size:19px; font-weight:800;">${data.category}</h5>
+                    <p class="text-center text-muted" style="font-size:15px;">
+                        <strong style="font-size:17px; color:black;">Total Votes: ${data.total_votes}</strong>
+                    </p>
+
+                    <canvas id="resultsChart"></canvas>
+
+                    <div class="candidate-list" id="candidateList"></div>
+
+                    <div class="verification-badge">
+                        <div class="verification-title">VERIFICATION</div>
+                        🔒 <strong>Coderholic Dev Co Ltd</strong><br>
+                        <span class="verification-sub">Votes reconciled against Paystack payment records.</span>
+                    </div>
+                </div>
+            `;
+
+            const ctx = document.getElementById("resultsChart").getContext("2d");
+
+            if (currentChart) currentChart.destroy();
+
+            currentChart = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: votes,
+                        backgroundColor: dynamicColors,
+                        borderWidth: 0
+                    }]
+                },
+                plugins: [glowPlugin],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 900 },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => {
+                                    const rawLabel = ctx.label.replace("👑 ", "");
+                                    return `${rawLabel}: ${ctx.raw} votes`;
+                                }
+                            }
+                        }
+                    },
+                    glowPlugin: { winnerIndex }
+                }
+            });
+
+            const list = document.getElementById("candidateList");
+            list.innerHTML = labels.map((label, i) => `
+                <div class="candidate-item">
+                    <div class="candidate-color" style="background:${dynamicColors[i]}"></div>
+                    ${label} — <strong>${votes[i]} votes</strong>
+                </div>
+            `).join("");
+
+            downloadBtn.style.display = "block";
+        });
+});
+
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes spin {
+    from { transform: rotate(0deg);}
+    to { transform: rotate(360deg);}
+}`;
+document.head.appendChild(style);
+
+document.getElementById("downloadPdfBtn").addEventListener("click", function () {
+    html2canvas(document.getElementById("chartContainer")).then(canvas => {
+        const pdf = new jspdf.jsPDF({
+            orientation: "landscape",
+            unit: "px",
+            format: [canvas.width, canvas.height]
+        });
+        pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0);
+        pdf.save("Voting_Results.pdf");
+    });
+});
+</script>
+
+{% endblock %}
