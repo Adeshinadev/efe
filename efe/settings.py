@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", '^iqm9n!+*tf!3^_4bx5&uor&uxt#f6y75oviri33lw
 if not SECRET_KEY:
     raise ValueError("🚨 SECRET_KEY is not set in the environment variables.")
 
-DEBUG = True #os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
+DEBUG = False #os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS if host.strip()]
 
