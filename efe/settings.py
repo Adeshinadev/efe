@@ -45,7 +45,7 @@ DEBUG = True #os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 
 ALLOWED_HOSTS = ['*']
 
-if DEBUG:
+if not DEBUG:
     PAYSTACK_PUBLIC_KEY = os.getenv("TEST_PAYSTACK_PUBLIC_KEY", "")
     PAYSTACK_SECRET_KEY = os.getenv("TEST_PAYSTACK_SECRET_KEY", "")
 else:
